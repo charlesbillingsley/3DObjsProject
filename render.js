@@ -1,8 +1,8 @@
 /**
- * Created by Hans Dulimarta.
+ * Created by
  */
 let modelMat = mat4.create();
-let canvas, paramGroup;
+let canvas, paramGroup, orthoProjMat, persProjMat;
 let posAttr, colAttr, modelUnif;
 let gl;
 let obj;
@@ -16,6 +16,9 @@ function main() {
   gl = WebGLUtils.create3DContext(canvas, null);
   ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
   .then (prog => {
+
+    orthoProjMat = mat4.create();
+    persProjMat = mat4.create();
 
     /* put all one-time initialization logic here */
     gl.useProgram (prog);
@@ -58,6 +61,21 @@ function createObject() {
 }
 
 function resizeWindow() {
+    canvas.width = window.innerWidth;
+    canvas.height = 0.9 * window.innerHeight;
+    if (canvas.width > canvas.height) { /* landscape */
+        let ratio = 2 * canvas.height / canvas.width;
+        console.log("Landscape mode, ratio is " + ratio);
+        mat4.ortho(orthoProjMat, -3, 3, -3 * ratio, 3 * ratio, -5, 5);
+        mat4.perspective(persProjMat,
+            Math.PI/3,  /* 60 degrees vertical field of view */
+            1/ratio,    /* must be width/height ratio */
+            1,          /* near plane at Z=1 */
+            20);        /* far plane at Z=20 */
+    } else {
+        alert ("Window is too narrow!");
+    }
+    
   let w = 0.98 * window.innerWidth;
   let h = 0.6 * window.innerHeight;
   let size = Math.min(0.98 * window.innerWidth, 0.65 * window.innerHeight);
