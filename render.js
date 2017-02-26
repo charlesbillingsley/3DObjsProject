@@ -67,13 +67,7 @@ function main() {
 
 function drawScene() {
     if (typeof obj !== 'undefined') {
-        var yPos = -0.5;
-        for (let k = 0; k < 3; k++) {
-            mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-            mat4.multiply(tmpMat, cameraCF, tmpMat);
-            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-            yPos += 0.5;
-        }
+        obj.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
 
