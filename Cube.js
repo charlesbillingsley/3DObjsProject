@@ -80,7 +80,6 @@ class Cube {
                 vertices.push(randColor[0], randColor[1], randColor[2]);
             }
         }
-        // console.log(vertices);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
@@ -103,7 +102,6 @@ class Cube {
             startingPoint = secondPoint;
             secondPoint = secondPoint + (subDiv + 1);
         }
-        // console.log("down "+downIndex);
 
         this.downIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.downIdxBuff);
@@ -126,7 +124,6 @@ class Cube {
             startingPoint = secondPoint;
             secondPoint = secondPoint + (subDiv + 1);
         }
-        // console.log("top "+topIndex);
 
         this.topIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.topIdxBuff);
@@ -149,7 +146,6 @@ class Cube {
             startingPoint = secondPoint;
             secondPoint = secondPoint + (subDiv + 1);
         }
-        // console.log("left "+leftIndex);
 
         this.leftIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.leftIdxBuff);
@@ -172,7 +168,6 @@ class Cube {
             startingPoint = secondPoint;
             secondPoint = secondPoint + (subDiv + 1);
         }
-        // console.log("right "+rightIndex);
 
         this.rightIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.rightIdxBuff);
@@ -195,7 +190,6 @@ class Cube {
             startingPoint = secondPoint;
             secondPoint = secondPoint + (subDiv + 1);
         }
-        // console.log("back "+backIndex);
 
         this.backIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.backIdxBuff);
@@ -218,7 +212,6 @@ class Cube {
             startingPoint = secondPoint;
             secondPoint = secondPoint + (subDiv + 1);
         }
-        // console.log("front "+frontIndex);
 
         this.frontIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.frontIdxBuff);

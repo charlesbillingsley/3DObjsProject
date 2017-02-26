@@ -21,7 +21,6 @@ class Ring {
         if (typeof col2 === "undefined") col2 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         let randColor = vec3.create();
         let vertices = [];
-        let normal = [];
         this.vbuff = gl.createBuffer();
 
         // Outter Ring
@@ -88,15 +87,25 @@ class Ring {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
 
-
-        //Normal Vectors
-        for (let k = 0; k < vertices.length; k ++){
-            normal.push(vertices[k] * -1);
-        }
-
-        this.nbuff = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
-        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(normal), gl.STATIC_DRAW);
+        // // Generate index order for top of ring
+        // let topIndex = [];
+        // topIndex.push(0);
+        // for (let k = 1; k <= subDiv; k++)
+        //     topIndex.push(k);
+        // topIndex.push(1);
+        // this.topIdxBuff = gl.createBuffer();
+        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.topIdxBuff);
+        // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(topIndex), gl.STATIC_DRAW);
+        //
+        // // Generate index order for bottom of ring
+        // let botIndex = [];
+        // botIndex.push(subDiv + 2);
+        // for (let k = (subDiv * 2) + 1; k >= subDiv + 2; k--)
+        //     botIndex.push(k);
+        // botIndex.push(subDiv + 1);
+        // this.botIdxBuff = gl.createBuffer();
+        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.botIdxBuff);
+        // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(botIndex), gl.STATIC_DRAW);
 
         // Generate index order for sides of the outter ring
         let outterIndex = [];
@@ -189,7 +198,6 @@ class Ring {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bottomIdxBuff);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(bottomIndex), gl.STATIC_DRAW);
 
-
         /* Put the indices as an array of objects. Each object has three attributes:
          primitive, buffer, and numPoints */
         this.indices = [
@@ -207,7 +215,7 @@ class Ring {
      * @param {Number} modelUniform a handle to a mat4 uniform in the shader for the coordinate frame of the model
      * @param {mat4} coordFrame a JS mat4 variable that holds the actual coordinate frame of the object
      */
-    draw(vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
+    draw(vertexAttr, colorAttr, modelUniform, coordFrame) {
         /* copy the coordinate frame matrix to the uniform memory in shader */
         gl.uniformMatrix4fv(modelUniform, false, coordFrame);
 
@@ -218,7 +226,6 @@ class Ring {
          the stride distance between one group to the next is 24 bytes */
         gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0); /* (x,y,z) begins at offset 0 */
         gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
-        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
 
         for (let k = 0; k < this.indices.length; k++) {
             let obj = this.indices[k];
