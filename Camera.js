@@ -23,8 +23,8 @@ class Camera {
         this.triTopColor2 = vec3.fromValues(0, 0, 255);
 
         // Tripod Legs
-        this.triLegsColor1 = vec3.fromValues(0, 174, 255);
-        this.triLegsColor2 = vec3.fromValues(0, 0, 255);
+        this.triLegsColor1 = vec3.fromValues(116, 135, 165);
+        this.triLegsColor2 = vec3.fromValues(114, 151, 211);
 
         /** Create the objects */
         this.body = new Cube(gl, 0.3, 4, this.bodyColor1, this.bodyColor2);
@@ -40,6 +40,13 @@ class Camera {
         this.bodyTransform = mat4.create();
         let stretchBody = vec3.fromValues(2,1,1);
         mat4.scale(this.bodyTransform, this.bodyTransform, stretchBody);
+
+        // Lens
+        this.lensTransform = mat4.create();
+        let lensAngle = -Math.PI/2;
+        mat4.rotateX(this.lensTransform, this.lensTransform, lensAngle);
+
+        // Glass on lens
 
         // Top of the tripod
         this.triTopTransform = mat4.create();
@@ -68,31 +75,33 @@ class Camera {
 
         // Camera Body
         this.stretched = mat4.create();
-        mat4.mul (this.stretched, coordFrame, this.bodyTransform);
+        mat4.mul(this.stretched, coordFrame, this.bodyTransform);
         this.body.draw(vertexAttr, colorAttr, modelUniform, this.stretched);
 
         // Camera Lens
-        this.lens.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.rotatedLens = mat4.create();
+        mat4.mul(this.rotatedLens, coordFrame, this.lensTransform);
+        this.lens.draw(vertexAttr, colorAttr, modelUniform, this.rotatedLens);
 
         // Glass on lens
         this.glass.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         // Top of the tripod
         this.moved = mat4.create();
-        mat4.mul (this.moved, coordFrame, this.triTopTransform);
+        mat4.mul(this.moved, coordFrame, this.triTopTransform);
         this.tripodTop.draw(vertexAttr, colorAttr, modelUniform, this.moved);
 
         // Tripod Legs
         this.movedTriLeg1 = mat4.create();
-        mat4.mul (this.movedTriLeg1, coordFrame, this.triLeg1Transform);
+        mat4.mul(this.movedTriLeg1, coordFrame, this.triLeg1Transform);
         this.tripodLeg1.draw(vertexAttr, colorAttr, modelUniform, this.movedTriLeg1);
 
         this.movedTriLeg2 = mat4.create();
-        mat4.mul (this.movedTriLeg2, coordFrame, this.triLeg2Transform);
+        mat4.mul(this.movedTriLeg2, coordFrame, this.triLeg2Transform);
         this.tripodLeg2.draw(vertexAttr, colorAttr, modelUniform, this.movedTriLeg2);
 
         this.movedTriLeg3 = mat4.create();
-        mat4.mul (this.movedTriLeg3, coordFrame, this.triLeg3Transform);
+        mat4.mul(this.movedTriLeg3, coordFrame, this.triLeg3Transform);
         this.tripodLeg3.draw(vertexAttr, colorAttr, modelUniform, this.movedTriLeg3);
     }
 }
