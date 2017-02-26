@@ -101,11 +101,6 @@ function render() {
   requestAnimationFrame(render);
 }
 
-// function createObject() {
-//   obj = null;
-//   mat4.identity(modelMat);
-// }
-
 function resizeWindow() {
     canvas.width = window.innerWidth;
     canvas.height = 0.9 * window.innerHeight;
@@ -121,12 +116,4 @@ function resizeWindow() {
     } else {
         alert ("Window is too narrow!");
     }
-    
-  let w = 0.98 * window.innerWidth;
-  let h = 0.6 * window.innerHeight;
-  let size = Math.min(0.98 * window.innerWidth, 0.65 * window.innerHeight);
-  /* keep a square viewport */
-  canvas.width = size;
-  canvas.height = size;
-  gl.viewport(0, 0, size, size);
 }
