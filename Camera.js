@@ -1,11 +1,20 @@
 /**
  * Created by christopherfracassi on 2/25/17.
  */
-
+/**
+ * TODO:
+ * -Colors?
+ * -Should we add a flash or anything else to our model?
+ * -We need to figure out requirement 7 which is making a large number of our model in a loop.
+ * (There is an example of this in his example gl-main.js file at line 134.)
+ * -We need to make 4 camera angles (we already have 2) and map them to keyboard keys
+ * -We need to use a drop down to select each object and then change it's position and
+ * orientation using the keyboard/mouse. (Each object needs a separate coordinate frame)
+ *
+ */
 class Camera {
     constructor(gl){
         /** Create the colors */
-        // TODO: Make the colors actually look good.
         // Camera Body
         this.bodyColor1 = vec3.fromValues(219, 121, 22);
         this.bodyColor2 = vec3.fromValues(219, 148, 43);
@@ -28,9 +37,9 @@ class Camera {
 
         /** Create the objects */
         this.body = new Cube(gl, 0.3, 4, this.bodyColor1, this.bodyColor2);
-        this.lens = new Ring(gl, 0.1, 0.05, 0.2, 30, 1, this.lensColor1, this.lensColor2);
+        this.lens = new Ring(gl, 0.13, 0.08, 0.2, 30, 1, this.lensColor1, this.lensColor2);
         this.glass = new Sphere(gl, 0.1, 15, this.glassColor1, this.glassColor2);
-        this.tripodTop = new Sphere(gl, .15, 15, this.triTopColor1, this.triTopColor2);
+        this.tripodTop = new Sphere(gl, .01, 15, this.triTopColor1, this.triTopColor2);
         this.tripodLeg1 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
         this.tripodLeg2 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
         this.tripodLeg3 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
@@ -47,18 +56,21 @@ class Camera {
         mat4.rotateX(this.lensTransform, this.lensTransform, lensAngle);
 
         // Glass on lens
+        this.glassTransform = mat4.create();
+        let moveGlass = vec3.fromValues(0, .15, 0);
+        mat4.translate(this.glassTransform, this.glassTransform, moveGlass);
 
         // Top of the tripod
         this.triTopTransform = mat4.create();
-        let moveTriTopDown = vec3.fromValues (0, 0, -0.2);
-        mat4.translate (this.triTopTransform, this.triTopTransform, moveTriTopDown);
+        let moveTriTopDown = vec3.fromValues(0, 0, -0.2);
+        mat4.translate(this.triTopTransform, this.triTopTransform, moveTriTopDown);
 
         // Tripod legs
         this.triLeg1Transform = mat4.create();
         this.triLeg2Transform = mat4.create();
         this.triLeg3Transform = mat4.create();
 
-        let moveTriLegDown = vec3.fromValues (0, 0, -.25);
+        let moveTriLegDown = vec3.fromValues(0, 0, -.25);
 
         mat4.translate (this.triLeg1Transform, this.triLeg1Transform, moveTriLegDown);
         mat4.translate (this.triLeg2Transform, this.triLeg2Transform, moveTriLegDown);
@@ -84,12 +96,14 @@ class Camera {
         this.lens.draw(vertexAttr, colorAttr, modelUniform, this.rotatedLens);
 
         // Glass on lens
-        this.glass.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.movedGlass = mat4.create();
+        mat4.mul(this.movedGlass, coordFrame, this.glassTransform);
+        this.glass.draw(vertexAttr, colorAttr, modelUniform, this.movedGlass);
 
         // Top of the tripod
-        this.moved = mat4.create();
-        mat4.mul(this.moved, coordFrame, this.triTopTransform);
-        this.tripodTop.draw(vertexAttr, colorAttr, modelUniform, this.moved);
+        this.movedTripod = mat4.create();
+        mat4.mul(this.movedTripod, coordFrame, this.triTopTransform);
+        this.tripodTop.draw(vertexAttr, colorAttr, modelUniform, this.movedTripod);
 
         // Tripod Legs
         this.movedTriLeg1 = mat4.create();
