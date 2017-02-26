@@ -2,8 +2,9 @@
  * Created by
  */
 let modelMat = mat4.create();
-let canvas, paramGroup, orthoProjMat, persProjMat;
-let posAttr, colAttr, modelUnif;
+let canvas, paramGroup;
+let orthoProjMat, persProjMat, viewMat, topViewMat, tmpMat, cameraCF;
+let posAttr, colAttr, modelUnif, viewUnif;
 let gl;
 let obj;
 
@@ -27,12 +28,32 @@ function main() {
     gl.enable(gl.DEPTH_TEST);
     gl.cullFace(gl.BACK);
 
-    /* the vertex shader defines TWO attribute vars and ONE uniform var */
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
+    viewUnif = gl.getUniformLocation(prog, "view");
     modelUnif = gl.getUniformLocation (prog, "modelCF");
     gl.enableVertexAttribArray (posAttr);
     gl.enableVertexAttribArray (colAttr);
+    orthoProjMat = mat4.create();
+    persProjMat = mat4.create();
+    viewMat = mat4.create();
+    topViewMat = mat4.create();
+    cameraCF = mat4.create();
+    tmpMat = mat4.create();
+
+    mat4.lookAt(viewMat,
+        vec3.fromValues(2, 2, 2), /* eye */
+        vec3.fromValues(0, 0, 0), /* focal point */
+        vec3.fromValues(0, 0, 1)
+    ); /* up */
+    mat4.lookAt(topViewMat,
+        vec3.fromValues(0,0,2),
+        vec3.fromValues(0,0,0),
+        vec3.fromValues(0,1,0)
+    );
+    gl.uniformMatrix4fv(modelUnif, false, cameraCF);
+
+    obj = new Camera(gl);
 
     /* calculate viewport */
     resizeWindow();
