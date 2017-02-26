@@ -4,7 +4,8 @@
 let modelMat = mat4.create();
 let canvas, paramGroup;
 let orthoProjMat, persProjMat, viewMat, topViewMat, tmpMat, cameraCF;
-let posAttr, colAttr, modelUnif, viewUnif;
+let posAttr, colAttr;
+let modelUnif, viewUnif, projUnif;
 let gl;
 let obj;
 
@@ -30,6 +31,7 @@ function main() {
 
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
+    projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
     modelUnif = gl.getUniformLocation (prog, "modelCF");
     gl.enableVertexAttribArray (posAttr);
@@ -64,22 +66,45 @@ function main() {
 }
 
 function drawScene() {
-  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-
-  if (obj) {
-    obj.draw(posAttr, colAttr, modelUnif, modelMat);
-  }
+    if (typeof obj !== 'undefined') {
+        var yPos = -0.5;
+        for (let k = 0; k < 3; k++) {
+            mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
+            mat4.multiply(tmpMat, cameraCF, tmpMat);
+            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+            yPos += 0.5;
+        }
+    }
 }
 
+function draw3D() {
+  /* We must update the projection and view matrices in the shader */
+    gl.uniformMatrix4fv(projUnif, false, persProjMat);
+    gl.uniformMatrix4fv(viewUnif, false, viewMat);
+    gl.viewport(0, 0, canvas.width/2, canvas.height);
+    drawScene();
+}
+
+function drawTopView() {
+  /* We must update the projection and view matrices in the shader */
+    gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
+    gl.uniformMatrix4fv(viewUnif, false, topViewMat);
+    gl.viewport(canvas.width/2, 0, canvas.width/2, canvas.height);
+    drawScene();
+}
+
+
 function render() {
-  drawScene();
+  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+  draw3D();
+  drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
   requestAnimationFrame(render);
 }
 
-function createObject() {
-  obj = null;
-  mat4.identity(modelMat);
-}
+// function createObject() {
+//   obj = null;
+//   mat4.identity(modelMat);
+// }
 
 function resizeWindow() {
     canvas.width = window.innerWidth;
