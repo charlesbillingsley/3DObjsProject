@@ -198,10 +198,6 @@ class Ring {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bottomIdxBuff);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(bottomIndex), gl.STATIC_DRAW);
 
-        console.log(outterIndex);
-        console.log(topIndex);
-        console.log(bottomIndex);
-
         /* Put the indices as an array of objects. Each object has three attributes:
          primitive, buffer, and numPoints */
         this.indices = [
