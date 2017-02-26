@@ -4,8 +4,11 @@
 
 class Camera {
     constructor(gl){
+        this.cubeColor1 = vec3.fromValues(0, 174, 255);
+        this.cubeColor2 = vec3.fromValues(0, 0, 255);
+
         // Create the objects
-        this.body = new Cube(gl, 0.3, 4);
+        this.body = new Cube(gl, 0.3, 4, this.cubeColor1, this.cubeColor2);
         this.lens = new Ring(gl, 0.1, 0.05, 0.2, 30, 1);
         this.glass = new Sphere(gl, 0.1, 15);
 
