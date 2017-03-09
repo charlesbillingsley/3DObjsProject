@@ -65,7 +65,6 @@ class Sphere {
                 topIndex.push(second + 1);
                 topIndex.push(first + 1);
 
-
             }
         }
         this.topIdxBuff = gl.createBuffer();

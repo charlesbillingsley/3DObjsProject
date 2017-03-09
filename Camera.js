@@ -39,7 +39,7 @@ class Camera {
         this.body = new Cube(gl, 0.3, 4, this.bodyColor1, this.bodyColor2);
         this.lens = new Ring(gl, 0.13, 0.08, 0.2, 30, 1, this.lensColor1, this.lensColor2);
         this.glass = new Sphere(gl, 0.1, 15, this.glassColor1, this.glassColor2);
-        this.tripodTop = new Sphere(gl, .01, 15, this.triTopColor1, this.triTopColor2);
+        this.tripodTop = new Sphere(gl, 0.07, 15, this.triTopColor1, this.triTopColor2);
         this.tripodLeg1 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
         this.tripodLeg2 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
         this.tripodLeg3 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
@@ -62,7 +62,7 @@ class Camera {
 
         // Top of the tripod
         this.triTopTransform = mat4.create();
-        let moveTriTopDown = vec3.fromValues(0, 0, -0.2);
+        let moveTriTopDown = vec3.fromValues(0, 0, -.2);
         mat4.translate(this.triTopTransform, this.triTopTransform, moveTriTopDown);
 
         // Tripod legs
@@ -80,42 +80,37 @@ class Camera {
         mat4.rotateX(this.triLeg1Transform, this.triLeg1Transform, triLeg1Angle);
         mat4.rotateY(this.triLeg2Transform, this.triLeg2Transform, triLeg1Angle);
         mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, -triLeg1Angle);
+
+        this.blank = mat4.create();
     }
 
     draw (vertexAttr, colorAttr, modelUniform, coordFrame) {
-        this.blank = mat4.create();
-
-        // Camera Body
-        this.stretched = mat4.create();
-        mat4.mul(this.stretched, coordFrame, this.bodyTransform);
-        this.body.draw(vertexAttr, colorAttr, modelUniform, this.stretched);
 
         // Camera Lens
-        this.rotatedLens = mat4.create();
-        mat4.mul(this.rotatedLens, coordFrame, this.lensTransform);
-        this.lens.draw(vertexAttr, colorAttr, modelUniform, this.rotatedLens);
+        mat4.mul(this.blank, coordFrame, this.lensTransform);
+        this.lens.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         // Glass on lens
-        this.movedGlass = mat4.create();
-        mat4.mul(this.movedGlass, coordFrame, this.glassTransform);
-        this.glass.draw(vertexAttr, colorAttr, modelUniform, this.movedGlass);
-
-        // Top of the tripod
-        this.movedTripod = mat4.create();
-        mat4.mul(this.movedTripod, coordFrame, this.triTopTransform);
-        this.tripodTop.draw(vertexAttr, colorAttr, modelUniform, this.movedTripod);
+        mat4.mul(this.blank, coordFrame, this.glassTransform);
+        this.glass.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         // Tripod Legs
-        this.movedTriLeg1 = mat4.create();
-        mat4.mul(this.movedTriLeg1, coordFrame, this.triLeg1Transform);
-        this.tripodLeg1.draw(vertexAttr, colorAttr, modelUniform, this.movedTriLeg1);
+        mat4.mul(this.blank, coordFrame, this.triLeg1Transform);
+        this.tripodLeg1.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
-        this.movedTriLeg2 = mat4.create();
-        mat4.mul(this.movedTriLeg2, coordFrame, this.triLeg2Transform);
-        this.tripodLeg2.draw(vertexAttr, colorAttr, modelUniform, this.movedTriLeg2);
+        mat4.mul(this.blank, coordFrame, this.triLeg2Transform);
+        this.tripodLeg2.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
-        this.movedTriLeg3 = mat4.create();
-        mat4.mul(this.movedTriLeg3, coordFrame, this.triLeg3Transform);
-        this.tripodLeg3.draw(vertexAttr, colorAttr, modelUniform, this.movedTriLeg3);
+        mat4.mul(this.blank, coordFrame, this.triLeg3Transform);
+        this.tripodLeg3.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
+        // Top of the tripod
+        mat4.mul(this.blank, coordFrame, this.triTopTransform);
+        this.tripodTop.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
+        // Camera Body
+        mat4.mul(this.blank, coordFrame, this.bodyTransform);
+        this.body.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
     }
 }
