@@ -1,17 +1,6 @@
 /**
  * Created by christopherfracassi on 2/25/17.
  */
-/**
- * TODO:
- * -Colors?
- * -Should we add a flash or anything else to our model?
- * -We need to figure out requirement 7 which is making a large number of our model in a loop.
- * (There is an example of this in his example gl-main.js file at line 134.)
- * -We need to make 4 camera angles (we already have 2) and map them to keyboard keys
- * -We need to use a drop down to select each object and then change it's position and
- * orientation using the keyboard/mouse. (Each object needs a separate coordinate frame)
- *
- */
 class Camera {
     constructor(gl){
         /** Create the colors */
