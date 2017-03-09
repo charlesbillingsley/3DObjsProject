@@ -111,7 +111,6 @@ class Cube {
 
         // Generate index order for the top of the cube
         let topIndex = [];
-        startingPoint = (subDiv + 1) * (subDiv + 1);
         secondPoint = startingPoint + (subDiv + 1);
         for (let numberOfRows = 0; numberOfRows < subDiv; numberOfRows++) {
             for (let i = 0; i < (subDiv + 1); i++) {
