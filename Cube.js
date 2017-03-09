@@ -82,7 +82,6 @@ class Cube {
         }
         // console.log(vertices);
 
-        /* copy the (x,y,z,r,g,b) sixtuplet into GPU buffer */
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
 
@@ -112,7 +111,7 @@ class Cube {
 
         // Generate index order for the top of the cube
         let topIndex = [];
-        startingPoint = 1 * (subDiv + 1) * (subDiv + 1);
+        startingPoint = (subDiv + 1) * (subDiv + 1);
         secondPoint = startingPoint + (subDiv + 1);
         for (let numberOfRows = 0; numberOfRows < subDiv; numberOfRows++) {
             for (let i = 0; i < (subDiv + 1); i++) {
