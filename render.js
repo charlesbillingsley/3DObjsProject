@@ -5,6 +5,17 @@
  *
  * Adapted from code given from Hans Dulimarta
  */
+/**
+ * TODO:
+ * -Colors?
+ * -Should we add a flash or anything else to our model?
+ * -We need to figure out requirement 7 which is making a large number of our model in a loop.
+ * (There is an example of this in his example gl-main.js file at line 134.)
+ * -We need to make 4 camera angles (we already have 2) and map them to keyboard keys
+ * -We need to use a drop down to select each object and then change it's position and
+ * orientation using the keyboard/mouse. (Each object needs a separate coordinate frame)
+ *
+ */
 let modelMat = mat4.create();
 let canvas, paramGroup;
 let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF;
@@ -13,6 +24,8 @@ let posAttr, colAttr;
 let modelUnif, viewUnif, projUnif;
 let gl;
 let obj;
+let objArr = new Array();
+let objFrames = new Array();
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -74,29 +87,33 @@ function main() {
 
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
 
-    obj = new Camera(gl);
+    let xPos = -.8;
+    let yPos = -.8;
+    for (let i = 0; i < 20; i++) {
+        objArr[i] = new Camera(gl);
+        objFrames[i] = mat4.create();
+        mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
+        mat4.multiply(objFrames[i], cameraCF, objFrames[i]);   // tmp = cameraCF * tmpMat
+        var posOrNeg = Math.random() < 0.5 ? -1 : 1;
+        xPos += Math.random();
+        yPos += Math.random();
 
+        xPos *= posOrNeg;
+        yPos *= posOrNeg;
+    }
     /* calculate viewport */
     resizeWindow();
 
     /* initiate the render loop */
-    render("1");
+    render();
   });
 }
 
 function drawScene() {
-    if (typeof obj !== 'undefined') {
-        obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-        let xPos = -.8;
-        let yPos = -.8;
+    for (let k = 0; k < objArr.length; k++) {
 
-        for (let k = 0; k < 2; k++) {
-            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, yPos, 0));
-            mat4.multiply(tmpMat, cameraCF, tmpMat);   // tmp = cameraCF * tmpMat
-            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-            xPos += .8;
-            yPos += .8;
-        }
+        objArr[k].draw(posAttr, colAttr, modelUnif, objFrames[k]);
+
     }
 }
 
