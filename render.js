@@ -25,6 +25,7 @@ let gl;
 let objArr = new Array();
 let objFrames = new Array();
 let objSelect;
+let numOfObjs;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -86,24 +87,11 @@ function main() {
 
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
 
-    // Load the first objects
-    let xPos = -.8;
-    let yPos = -.8;
-    for (let i = 0; i < 5; i++) {
-        objArr[i] = new Camera(gl);
-        objFrames[i] = mat4.create();
-        mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
-        mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
-        var posOrNeg = Math.random() < 0.5 ? -1 : 1;
-        xPos += Math.random() + 2;
-        yPos += Math.random() + 2;
 
-        xPos *= posOrNeg;
-        yPos *= posOrNeg;
-    }
+    numOfObjs = document.getElementById("numOfObjs");
+    //numOfObjs.addEventListener("blur", createObjs);
 
-    /* Fill in the drop down box. */
-    populateDropDown();
+    createObjs();
 
     /* calculate viewport */
     resizeWindow();
@@ -113,9 +101,32 @@ function main() {
   });
 }
 
+function createObjs() {
+    // Load the objects
+    let xPos = -.8;
+    let yPos = -.8;
+    objArr = [];
+    objFrames = [];
+    for (let i = 0; i < numOfObjs.value; i++) {
+        objArr[i] = new Camera(gl);
+        objFrames[i] = mat4.create();
+        mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
+        mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
+        var posOrNeg = Math.random() < 0.5 ? -1 : 1;
+        xPos += Math.random();
+        yPos += Math.random();
+
+        xPos *= posOrNeg;
+        yPos *= posOrNeg;
+    }
+    /* Fill in the drop down box. */
+    populateDropDown();
+}
+
 function populateDropDown() {
     let fragment = document.createDocumentFragment();
     objSelect = document.getElementById("objSelect");
+    objSelect.innerHTML = "";
     objFrames.forEach(function (currObjFrame, i) {
         let option = document.createElement("option");
         option.innerHTML = "Camera #" + i;
