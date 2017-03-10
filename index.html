@@ -16,7 +16,12 @@
 <body onload="main()">
     <div>
         Choose Which Object to Move:
-        <select id="objSelect" name="objSelect"></select>
+        <select id="objSelect" name="objSelect"></select><br>
+    </div>
+    <div>
+        How Many cameras would you like to create?
+        <input id="numOfObjs" type="number" name="numOfObjs" value="5" onblur="createObjs()"><br>
+
     </div>
     <canvas id="gl-canvas"></canvas>
     <div id="msg" style="text-align: center; font-size: 18pt"></div>
