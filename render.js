@@ -25,11 +25,12 @@ let gl;
 let objArr = new Array();
 let objFrames = new Array();
 let objSelect;
-let numOfObjs;
+let numOfObjs, mostRecentNumOfObjs;
+let textOut;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
-  textOut = document.getElementById("msg");
+  textOut = document.getElementById("message");
   gl = WebGLUtils.setupWebGL(canvas, null);
 
   /* setup window resize listener */
@@ -89,7 +90,7 @@ function main() {
 
 
     numOfObjs = document.getElementById("numOfObjs");
-    //numOfObjs.addEventListener("blur", createObjs);
+    mostRecentNumOfObjs = -1;
 
     createObjs();
 
@@ -102,25 +103,30 @@ function main() {
 }
 
 function createObjs() {
-    // Load the objects
-    let xPos = -.8;
-    let yPos = -.8;
-    objArr = [];
-    objFrames = [];
-    for (let i = 0; i < numOfObjs.value; i++) {
-        objArr[i] = new Camera(gl);
-        objFrames[i] = mat4.create();
-        mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
-        mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
-        var posOrNeg = Math.random() < 0.5 ? -1 : 1;
-        xPos += Math.random();
-        yPos += Math.random();
+    if (numOfObjs.value < 0) {
+        textOut.innerHTML = "Number Cannot be Negative.";
+    } else if (numOfObjs.value != mostRecentNumOfObjs) {
+        textOut.innerHTML = "";
+        // Load the objects
+        let xPos = -.8;
+        let yPos = -.8;
+        objArr = [];
+        objFrames = [];
+        for (let i = 0; i < numOfObjs.value; i++) {
+            objArr[i] = new Camera(gl);
+            objFrames[i] = mat4.create();
+            mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
+            mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
+            var posOrNeg = Math.random() < 0.5 ? -1 : 1;
+            xPos += Math.random();
+            yPos += Math.random();
 
-        xPos *= posOrNeg;
-        yPos *= posOrNeg;
+            xPos *= posOrNeg;
+            yPos *= posOrNeg;
+        }
+        /* Fill in the drop down box. */
+        populateDropDown();
     }
-    /* Fill in the drop down box. */
-    populateDropDown();
 }
 
 function populateDropDown() {
