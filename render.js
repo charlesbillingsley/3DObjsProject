@@ -8,13 +8,7 @@
 /**
  * TODO:
  * -Colors?
- * -Should we add a flash or anything else to our model?
- * -We need to figure out requirement 7 which is making a large number of our model in a loop.
- * (There is an example of this in his example gl-main.js file at line 134.)
- * -We need to make 4 camera angles (we already have 2) and map them to keyboard keys
- * -We need to use a drop down to select each object and then change it's position and
- * orientation using the keyboard/mouse. (Each object needs a separate coordinate frame)
- *
+ * -Should we add a flash or anything else to our model? Or another object even?
  */
 let canvas;
 let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF;
@@ -22,8 +16,8 @@ let currentCameraView;
 let posAttr, colAttr;
 let modelUnif, viewUnif, projUnif;
 let gl;
-let objArr = new Array();
-let objFrames = new Array();
+let objArr = [];
+let objFrames = [];
 let objSelect;
 let numOfObjs, mostRecentNumOfObjs;
 let textOut;
@@ -117,7 +111,7 @@ function createObjs() {
             objFrames[i] = mat4.create();
             mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
             mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
-            var posOrNeg = Math.random() < 0.5 ? -1 : 1;
+            let posOrNeg = Math.random() < 0.5 ? -1 : 1;
             xPos += Math.random();
             yPos += Math.random();
 
@@ -258,6 +252,24 @@ function keyboardHandler(event) {
         case "Z":
             moveSelectedObject("Z");
             break;
+        case "a":
+            rotateSelectedObject("a");
+            break;
+        case "A":
+            rotateSelectedObject("A");
+            break;
+        case "b":
+            rotateSelectedObject("b");
+            break;
+        case "B":
+            rotateSelectedObject("B");
+            break;
+        case "c":
+            rotateSelectedObject("c");
+            break;
+        case "C":
+            rotateSelectedObject("C");
+            break;
     }
 }
 
@@ -266,12 +278,12 @@ function moveSelectedObject(command) {
     let currentFrame = objSelect.value;
 
     /* The Matrices to Move */
-    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 1, 0, 0));
-    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-1, 0, 0));
-    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 1, 0));
-    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-1, 0));
-    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, 1));
-    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-1));
+    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( .5, 0, 0));
+    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.5, 0, 0));
+    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, .5, 0));
+    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-.5, 0));
+    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, .5));
+    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-.5));
     switch (command) {
         case "x":
             mat4.multiply(objFrames[currentFrame], transXneg, objFrames[currentFrame]);
@@ -290,6 +302,32 @@ function moveSelectedObject(command) {
             break;
         case "Z":
             mat4.multiply(objFrames[currentFrame], transZpos, objFrames[currentFrame]);
+            break;
+    }
+}
+
+function rotateSelectedObject(command) {
+    /* The currently selected object */
+    let currentFrame = objSelect.value;
+
+    switch (command) {
+        case "a":
+            mat4.rotateX(objFrames[currentFrame], objFrames[currentFrame], Math.PI / 180);
+            break;
+        case "A":
+            mat4.rotateX(objFrames[currentFrame], objFrames[currentFrame], -Math.PI / 180);
+            break;
+        case "b":
+            mat4.rotateY(objFrames[currentFrame], objFrames[currentFrame], Math.PI / 180);
+            break;
+        case "B":
+            mat4.rotateY(objFrames[currentFrame], objFrames[currentFrame], -Math.PI / 180);
+            break;
+        case "c":
+            mat4.rotateZ(objFrames[currentFrame], objFrames[currentFrame], Math.PI / 180);
+            break;
+        case "C":
+            mat4.rotateZ(objFrames[currentFrame], objFrames[currentFrame], -Math.PI / 180);
             break;
     }
 }
