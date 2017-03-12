@@ -5,11 +5,6 @@
  *
  * Adapted from code given from Hans Dulimarta
  */
-/**
- * TODO:
- * -Colors?
- * -Should we add a flash or anything else to our model? Or another object even?
- */
 let canvas;
 let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF;
 let currentCameraView;
