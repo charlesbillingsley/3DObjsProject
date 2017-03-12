@@ -11,10 +11,13 @@ let currentCameraView;
 let posAttr, colAttr;
 let modelUnif, viewUnif, projUnif;
 let gl;
-let objArr = [];
-let objFrames = [];
-let objSelect;
-let numOfObjs, mostRecentNumOfObjs;
+let cameraObjArr = [];
+let tableObjArr = [];
+let cameraObjFrames = [];
+let tableObjFrames = [];
+let cameraObjSelect, tableObjSelect;
+let numOfCameraObjs, mostRecentNumOfCameraObjs;
+let numOfTableObjs, mostRecentNumOfTableObjs;
 let textOut;
 
 function main() {
@@ -78,10 +81,13 @@ function main() {
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
 
 
-    numOfObjs = document.getElementById("numOfObjs");
-    mostRecentNumOfObjs = -1;
+    numOfCameraObjs = document.getElementById("numOfCameraObjs");
+    mostRecentNumOfCameraObjs = -1;
+    numOfTableObjs = document.getElementById("numOfTableObjs");
+    mostRecentNumOfTableObjs = -1;
 
-    createObjs();
+    createCameraObjs();
+    createTableObjs();
 
     /* calculate viewport */
     resizeWindow();
@@ -91,54 +97,115 @@ function main() {
   });
 }
 
-function createObjs() {
-    if (numOfObjs.value < 0) {
+function createCameraObjs() {
+    if (numOfCameraObjs.value < 0) {
         textOut.innerHTML = "Number Cannot be Negative.";
-    } else if (numOfObjs.value != mostRecentNumOfObjs) {
+    } else if (numOfCameraObjs.value != mostRecentNumOfCameraObjs) {
         textOut.innerHTML = "";
         // Load the objects
-        let xPos = -.8;
-        let yPos = -.8;
-        objArr = [];
-        objFrames = [];
-        for (let i = 0; i < numOfObjs.value; i+=2) {
-            objArr[i] = new Camera(gl);
-            objArr[i+1] = new Table(gl);
-            objFrames[i] = mat4.create();
-            objFrames[i + 1] = mat4.create();
-            mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
-            mat4.fromTranslation(objFrames[i + 1], vec3.fromValues(xPos + .2, yPos + .2, 0));
-            mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
-            mat4.multiply(objFrames[i + 1], cameraCF, objFrames[i + 1]);
-            let posOrNeg = Math.random() < 0.5 ? -1 : 1;
-            xPos += Math.random();
-            yPos += Math.random();
+        let xPos;
+        let yPos;
+        cameraObjArr = [];
+        cameraObjFrames = [];
+        for (let i = 0; i < numOfCameraObjs.value; i++) {
+            if (i == 0) {
+                xPos = 0;
+                yPos = -1.5;
 
-            xPos *= posOrNeg;
-            yPos *= posOrNeg;
+                cameraObjArr[i] = new Camera(gl);
+                cameraObjFrames[i] = mat4.create();
+
+                mat4.fromTranslation(cameraObjFrames[i], vec3.fromValues(xPos, yPos, 0));
+                mat4.rotateZ(cameraObjFrames[i], cameraObjFrames[i], Math.PI/4);
+                mat4.multiply(cameraObjFrames[i], cameraCF, cameraObjFrames[i]);
+
+            } else if (i == 1) {
+                xPos = .6;
+                yPos = 0;
+
+                cameraObjArr[i] = new Camera(gl);
+                cameraObjFrames[i] = mat4.create();
+
+                mat4.fromTranslation(cameraObjFrames[i], vec3.fromValues(xPos, yPos, 0));
+                mat4.rotateZ(cameraObjFrames[i], cameraObjFrames[i], Math.PI/2);
+                mat4.multiply(cameraObjFrames[i], cameraCF, cameraObjFrames[i]);
+
+            } else if (i == 2) {
+                xPos = 0;
+                yPos = 1.5;
+
+                cameraObjArr[i] = new Camera(gl);
+                cameraObjFrames[i] = mat4.create();
+
+                mat4.fromTranslation(cameraObjFrames[i], vec3.fromValues(xPos, yPos, 0));
+                mat4.rotateZ(cameraObjFrames[i], cameraObjFrames[i], 3*Math.PI/4);
+                mat4.multiply(cameraObjFrames[i], cameraCF, cameraObjFrames[i]);
+
+            } else {
+                cameraObjArr[i] = new Camera(gl);
+                cameraObjFrames[i] = mat4.create();
+            }
         }
         /* Fill in the drop down box. */
-        populateDropDown();
+        populateDropDown("camera");
     }
 }
 
-function populateDropDown() {
-    let fragment = document.createDocumentFragment();
-    objSelect = document.getElementById("objSelect");
-    objSelect.innerHTML = "";
-    objFrames.forEach(function (currObjFrame, i) {
-        let option = document.createElement("option");
-        option.innerHTML = "Camera #" + i;
-        option.value = i;
-        option.id = "Object" + i;
-        fragment.appendChild(option);
-    });
-    objSelect.appendChild(fragment);
+function createTableObjs() {
+    if (numOfTableObjs.value < 0) {
+        textOut.innerHTML = "Number Cannot be Negative.";
+    } else if (numOfTableObjs.value != mostRecentNumOfTableObjs) {
+        textOut.innerHTML = "";
+        // Load the objects
+        let xPos = -1.5;
+        let yPos = 0;
+        tableObjArr = [];
+        tableObjFrames = [];
+        for (let i = 0; i < numOfTableObjs.value; i++) {
+            tableObjArr[i] = new Table(gl);
+            tableObjFrames[i] = mat4.create();
+            mat4.fromTranslation(tableObjFrames[i], vec3.fromValues(xPos, yPos, 0));
+            mat4.multiply(tableObjFrames[i], cameraCF, tableObjFrames[i]);
+        }
+        /* Fill in the drop down box. */
+        populateDropDown("table");
+    }
+}
+
+function populateDropDown(obj) {
+    if (obj == "camera") {
+        let fragment = document.createDocumentFragment();
+        cameraObjSelect = document.getElementById("cameraObjSelect");
+        cameraObjSelect.innerHTML = "";
+        cameraObjFrames.forEach(function (currObjFrame, i) {
+            let option = document.createElement("option");
+            option.innerHTML = "Camera #" + i;
+            option.value = i;
+            option.id = "Object" + i;
+            fragment.appendChild(option);
+        });
+        cameraObjSelect.appendChild(fragment);
+    } else if (obj == "table") {
+        let fragment = document.createDocumentFragment();
+        tableObjSelect = document.getElementById("tableObjSelect");
+        tableObjSelect.innerHTML = "";
+        tableObjFrames.forEach(function (currObjFrame, i) {
+            let option = document.createElement("option");
+            option.innerHTML = "Table #" + i;
+            option.value = i;
+            option.id = "Object" + i;
+            fragment.appendChild(option);
+        });
+        tableObjSelect.appendChild(fragment);
+    }
 }
 
 function drawScene() {
-    for (let k = 0; k < objArr.length; k++) {
-        objArr[k].draw(posAttr, colAttr, modelUnif, objFrames[k]);
+    for (let k = 0; k < cameraObjArr.length; k++) {
+        cameraObjArr[k].draw(posAttr, colAttr, modelUnif, cameraObjFrames[k]);
+    }
+    for (let j = 0; j < tableObjArr.length; j++) {
+        tableObjArr[j].draw(posAttr, colAttr, modelUnif, tableObjFrames[j]);
     }
 }
 
@@ -273,8 +340,18 @@ function keyboardHandler(event) {
 }
 
 function moveSelectedObject(command) {
+
+    /* The type of the object to be moved*/
+    let selectedObjType;
     /* The currently selected object */
-    let currentFrame = objSelect.value;
+    let currentFrame;
+    if (document.getElementById("moveCameraRadio").checked) {
+        selectedObjType = "camera";
+        currentFrame = cameraObjSelect.value;
+    } else if (document.getElementById("moveTableRadio").checked) {
+        selectedObjType = "table";
+        currentFrame = tableObjSelect.value;
+    }
 
     /* The Matrices to Move */
     const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( .5, 0, 0));
@@ -283,50 +360,106 @@ function moveSelectedObject(command) {
     const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-.5, 0));
     const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, .5));
     const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-.5));
-    switch (command) {
-        case "x":
-            mat4.multiply(objFrames[currentFrame], transXneg, objFrames[currentFrame]);
-            break;
-        case "X":
-            mat4.multiply(objFrames[currentFrame], transXpos, objFrames[currentFrame]);
-            break;
-        case "y":
-            mat4.multiply(objFrames[currentFrame], transYneg, objFrames[currentFrame]);
-            break;
-        case "Y":
-            mat4.multiply(objFrames[currentFrame], transYpos, objFrames[currentFrame]);
-            break;
-        case "z":
-            mat4.multiply(objFrames[currentFrame], transZneg, objFrames[currentFrame]);
-            break;
-        case "Z":
-            mat4.multiply(objFrames[currentFrame], transZpos, objFrames[currentFrame]);
-            break;
+
+    if (selectedObjType == "camera") {
+        switch (command) {
+            case "x":
+                mat4.multiply(cameraObjFrames[currentFrame], transXneg, cameraObjFrames[currentFrame]);
+                break;
+            case "X":
+                mat4.multiply(cameraObjFrames[currentFrame], transXpos, cameraObjFrames[currentFrame]);
+                break;
+            case "y":
+                mat4.multiply(cameraObjFrames[currentFrame], transYneg, cameraObjFrames[currentFrame]);
+                break;
+            case "Y":
+                mat4.multiply(cameraObjFrames[currentFrame], transYpos, cameraObjFrames[currentFrame]);
+                break;
+            case "z":
+                mat4.multiply(cameraObjFrames[currentFrame], transZneg, cameraObjFrames[currentFrame]);
+                break;
+            case "Z":
+                mat4.multiply(cameraObjFrames[currentFrame], transZpos, cameraObjFrames[currentFrame]);
+                break;
+        }
+    } else if (selectedObjType == "table") {
+        switch (command) {
+            case "x":
+                mat4.multiply(tableObjFrames[currentFrame], transXneg, tableObjFrames[currentFrame]);
+                break;
+            case "X":
+                mat4.multiply(tableObjFrames[currentFrame], transXpos, tableObjFrames[currentFrame]);
+                break;
+            case "y":
+                mat4.multiply(tableObjFrames[currentFrame], transYneg, tableObjFrames[currentFrame]);
+                break;
+            case "Y":
+                mat4.multiply(tableObjFrames[currentFrame], transYpos, tableObjFrames[currentFrame]);
+                break;
+            case "z":
+                mat4.multiply(tableObjFrames[currentFrame], transZneg, tableObjFrames[currentFrame]);
+                break;
+            case "Z":
+                mat4.multiply(tableObjFrames[currentFrame], transZpos, tableObjFrames[currentFrame]);
+                break;
+        }
     }
 }
 
 function rotateSelectedObject(command) {
+    /* The type of the object to be moved*/
+    let selectedObjType;
     /* The currently selected object */
-    let currentFrame = objSelect.value;
+    let currentFrame;
+    if (document.getElementById("moveCameraRadio").checked) {
+        selectedObjType = "camera";
+        currentFrame = cameraObjSelect.value;
+    } else if (document.getElementById("moveTableRadio").checked) {
+        selectedObjType = "table";
+        currentFrame = tableObjSelect.value;
+    }
 
-    switch (command) {
-        case "a":
-            mat4.rotateX(objFrames[currentFrame], objFrames[currentFrame], Math.PI / 180);
-            break;
-        case "A":
-            mat4.rotateX(objFrames[currentFrame], objFrames[currentFrame], -Math.PI / 180);
-            break;
-        case "b":
-            mat4.rotateY(objFrames[currentFrame], objFrames[currentFrame], Math.PI / 180);
-            break;
-        case "B":
-            mat4.rotateY(objFrames[currentFrame], objFrames[currentFrame], -Math.PI / 180);
-            break;
-        case "c":
-            mat4.rotateZ(objFrames[currentFrame], objFrames[currentFrame], Math.PI / 180);
-            break;
-        case "C":
-            mat4.rotateZ(objFrames[currentFrame], objFrames[currentFrame], -Math.PI / 180);
-            break;
+    if (selectedObjType == "camera") {
+        switch (command) {
+            case "a":
+                mat4.rotateX(cameraObjFrames[currentFrame], cameraObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "A":
+                mat4.rotateX(cameraObjFrames[currentFrame], cameraObjFrames[currentFrame], -Math.PI / 180);
+                break;
+            case "b":
+                mat4.rotateY(cameraObjFrames[currentFrame], cameraObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "B":
+                mat4.rotateY(cameraObjFrames[currentFrame], cameraObjFrames[currentFrame], -Math.PI / 180);
+                break;
+            case "c":
+                mat4.rotateZ(cameraObjFrames[currentFrame], cameraObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "C":
+                mat4.rotateZ(cameraObjFrames[currentFrame], cameraObjFrames[currentFrame], -Math.PI / 180);
+                break;
+        }
+    } else if (selectedObjType == "table") {
+        switch (command) {
+            case "a":
+                mat4.rotateX(tableObjFrames[currentFrame], tableObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "A":
+                mat4.rotateX(tableObjFrames[currentFrame], tableObjFrames[currentFrame], -Math.PI / 180);
+                break;
+            case "b":
+                mat4.rotateY(tableObjFrames[currentFrame], tableObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "B":
+                mat4.rotateY(tableObjFrames[currentFrame], tableObjFrames[currentFrame], -Math.PI / 180);
+                break;
+            case "c":
+                mat4.rotateZ(tableObjFrames[currentFrame], tableObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "C":
+                mat4.rotateZ(tableObjFrames[currentFrame], tableObjFrames[currentFrame], -Math.PI / 180);
+                break;
+        }
     }
 }
