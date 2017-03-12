@@ -57,22 +57,22 @@ class Table {
 
     }
 
-    draw (vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
+    draw (vertexAttr, colorAttr, modelUniform, coordFrame) {
         //Table Top
         mat4.mul(this.blank, coordFrame, this.topTransform);
-        this.tableTop.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.tableTop.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.legTransform1);
-        this.tableLeg1.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.tableLeg1.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.legTransform2);
-        this.tableLeg2.draw(vertexAttr, colorAttr,  normAttr,modelUniform, this.blank);
+        this.tableLeg2.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.legTransform3);
-        this.tableLeg3.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.tableLeg3.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.legTransform4);
-        this.tableLeg4.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.tableLeg4.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
 
     }

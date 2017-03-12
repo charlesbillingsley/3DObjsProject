@@ -101,11 +101,15 @@ function createObjs() {
         let yPos = -.8;
         objArr = [];
         objFrames = [];
-        for (let i = 0; i < numOfObjs.value; i++) {
+        for (let i = 0; i < numOfObjs.value; i+=2) {
             objArr[i] = new Camera(gl);
+            objArr[i+1] = new Table(gl);
             objFrames[i] = mat4.create();
+            objFrames[i + 1] = mat4.create();
             mat4.fromTranslation(objFrames[i], vec3.fromValues(xPos, yPos, 0));
+            mat4.fromTranslation(objFrames[i + 1], vec3.fromValues(xPos + .2, yPos + .2, 0));
             mat4.multiply(objFrames[i], cameraCF, objFrames[i]);
+            mat4.multiply(objFrames[i + 1], cameraCF, objFrames[i + 1]);
             let posOrNeg = Math.random() < 0.5 ? -1 : 1;
             xPos += Math.random();
             yPos += Math.random();
