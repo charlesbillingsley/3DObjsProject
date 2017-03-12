@@ -25,7 +25,7 @@ class Camera {
         this.triLegsColor2 = vec3.fromValues(.8, .8, .8);
 
         /** Create the objects */
-        this.body = new Cube(gl, 0.3, 4, this.bodyColor1, this.bodyColor2);
+        this.body = new Cube2(gl, 0.3, 4, this.bodyColor1, this.bodyColor2, this.bodyColor2);
         this.lens = new Ring(gl, 0.13, 0.08, 0.2, 30, 1, this.lensColor1, this.lensColor2);
         this.glass = new Sphere(gl, 0.1, 15, this.glassColor1, this.glassColor2);
         this.tripodTop = new Sphere(gl, 0.07, 15, this.triTopColor1, this.triTopColor2);

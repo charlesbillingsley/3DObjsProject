@@ -87,26 +87,6 @@ class Ring {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
 
-        // // Generate index order for top of ring
-        // let topIndex = [];
-        // topIndex.push(0);
-        // for (let k = 1; k <= subDiv; k++)
-        //     topIndex.push(k);
-        // topIndex.push(1);
-        // this.topIdxBuff = gl.createBuffer();
-        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.topIdxBuff);
-        // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(topIndex), gl.STATIC_DRAW);
-        //
-        // // Generate index order for bottom of ring
-        // let botIndex = [];
-        // botIndex.push(subDiv + 2);
-        // for (let k = (subDiv * 2) + 1; k >= subDiv + 2; k--)
-        //     botIndex.push(k);
-        // botIndex.push(subDiv + 1);
-        // this.botIdxBuff = gl.createBuffer();
-        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.botIdxBuff);
-        // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(botIndex), gl.STATIC_DRAW);
-
         // Generate index order for sides of the outter ring
         let outterIndex = [];
         let j = subDiv + 3;
@@ -197,6 +177,7 @@ class Ring {
         this.bottomIdxBuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bottomIdxBuff);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint8Array.from(bottomIndex), gl.STATIC_DRAW);
+
 
         /* Put the indices as an array of objects. Each object has three attributes:
          primitive, buffer, and numPoints */
