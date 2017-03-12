@@ -17,12 +17,22 @@
 <body onload="main()">
     <div id="message" style="text-align: center; font-size: 18pt; color: red"></div>
     <div>
-        Choose Which Object to Move:
-        <select id="objSelect" name="objSelect"></select><br>
+        Choose Which Camera to Move:
+        <select id="cameraObjSelect" name="cameraObjSelect"></select>
+        <input type="radio" id="moveCameraRadio" name="radio" value="camera"> Move Camera<br>
+    </div>
+    <div>
+        Choose Which Table to Move:
+        <select id="tableObjSelect" name="tableObjSelect"></select>
+        <input type="radio" id="moveTableRadio" name="radio" value="table"> Move Table<br>
     </div>
     <div>
         How Many cameras would you like to create?
-        <input id="numOfObjs" type="number" name="numOfObjs" value="5" onblur="createObjs()" min="0"><br>
+        <input id="numOfCameraObjs" type="number" name="numOfCameraObjs" value="3" onblur="createCameraObjs()" min="0"><br>
+    </div>
+    <div>
+        How Many tables would you like to create?
+        <input id="numOfTableObjs" type="number" name="numOfTableObjs" value="1" onblur="createTableObjs()" min="0"><br>
     </div>
     <canvas id="gl-canvas"></canvas>
 </body>
