@@ -5,24 +5,24 @@ class Camera {
     constructor(gl){
         /** Create the colors */
         // Camera Body
-        this.bodyColor1 = vec3.fromValues(219, 121, 22);
-        this.bodyColor2 = vec3.fromValues(219, 148, 43);
+        this.bodyColor1 = vec3.fromValues(.95, .95, .95);
+        this.bodyColor2 = vec3.fromValues(.85, .85, .85);
 
         // Camera Lens
-        this.lensColor1 = vec3.fromValues(219, 148, 43);
-        this.lensColor2 = vec3.fromValues(219, 122, 38);
+        this.lensColor1 = vec3.fromValues(.9, .9, .9);
+        this.lensColor2 = vec3.fromValues(.8, .8, .8);
 
         // Glass on lens
-        this.glassColor1 = vec3.fromValues(0, 174, 255);
-        this.glassColor2 = vec3.fromValues(0, 0, 255);
+        this.glassColor1 = vec3.fromValues(0, 1, 1);
+        this.glassColor2 = vec3.fromValues(0, 0.9, .9);
 
         // Top of the tripod
-        this.triTopColor1 = vec3.fromValues(0, 174, 255);
-        this.triTopColor2 = vec3.fromValues(0, 0, 255);
+        this.triTopColor1 = vec3.fromValues(0, 1, 1);
+        this.triTopColor2 = vec3.fromValues(0, 0.9, 0.9);
 
         // Tripod Legs
-        this.triLegsColor1 = vec3.fromValues(116, 135, 165);
-        this.triLegsColor2 = vec3.fromValues(114, 151, 211);
+        this.triLegsColor1 = vec3.fromValues(.95, .95, .95);
+        this.triLegsColor2 = vec3.fromValues(.8, .8, .8);
 
         /** Create the objects */
         this.body = new Cube(gl, 0.3, 4, this.bodyColor1, this.bodyColor2);
