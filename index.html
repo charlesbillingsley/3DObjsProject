@@ -9,6 +9,7 @@
   <script src="render.js"></script>
   <script src="Camera.js"></script>
   <script src="Table.js"></script>
+  <script src="GreenScreen.js"></script>
   <script src="Cube2.js"></script>
   <script src="Ring.js"></script>
   <script src="Sphere.js"></script>
@@ -17,16 +18,21 @@
 <body onload="main()">
     <div id="message" style="text-align: center; font-size: 18pt; color: red"></div>
     <div>
-        Choose Which Camera to Move:
+        Choose Which Camera to Move: &nbsp &nbsp &nbsp &nbsp
         <select id="cameraObjSelect" name="cameraObjSelect"></select>
         <input type="radio" id="moveCameraRadio" name="radio" value="camera"> Move Camera &nbsp
         <button id="generateManyCamerasButton" onclick="generateManyCameras()">Generate 1000 Cameras</button><br>
     </div>
     <div>
-        Choose Which Table to Move: &nbsp &nbsp
+        Choose Which Table to Move: &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
         <select id="tableObjSelect" name="tableObjSelect"></select>
         &nbsp &nbsp
         <input type="radio" id="moveTableRadio" name="radio" value="table"> Move Table<br>
+    </div>
+    <div>
+        Choose Which Green Screen to Move:
+        <select id="screenObjSelect" name="screenObjSelect"></select>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+        <input type="radio" id="moveScreenRadio" name="radio" value="screen"> Move Green Screen<br>
     </div>
     <div>
         How Many cameras would you like to create?
@@ -36,6 +42,12 @@
         How Many tables would you like to create?
         <input id="numOfTableObjs" type="number" name="numOfTableObjs" value="1" onblur="createTableObjs()" min="0"><br>
     </div>
+    <div>
+        How Many green screens would you like to create?
+        <input id="numOfScreenObjs" type="number" name="numOfScreenObjs" value="1" onblur="createScreenObjs()" min="0"><br>
+    </div>
+    <br>
+    <span>Created by Chris Fracassi and Charles Billingsley</span>
     <canvas id="gl-canvas"></canvas>
 </body>
 </html>

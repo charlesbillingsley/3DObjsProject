@@ -13,11 +13,14 @@ let modelUnif, viewUnif, projUnif;
 let gl;
 let cameraObjArr = [];
 let tableObjArr = [];
+let screenObjArr = [];
 let cameraObjFrames = [];
 let tableObjFrames = [];
-let cameraObjSelect, tableObjSelect;
+let screenObjFrames = [];
+let cameraObjSelect, tableObjSelect, screenObjSelect;
 let numOfCameraObjs, mostRecentNumOfCameraObjs;
 let numOfTableObjs, mostRecentNumOfTableObjs;
+let numOfScreenObjs, mostRecentNumOfScreenObjs;
 let textOut;
 
 function main() {
@@ -85,9 +88,12 @@ function main() {
     mostRecentNumOfCameraObjs = -1;
     numOfTableObjs = document.getElementById("numOfTableObjs");
     mostRecentNumOfTableObjs = -1;
+    numOfScreenObjs = document.getElementById("numOfScreenObjs");
+    mostRecentNumOfScreenObjs = -1;
 
     createCameraObjs();
     createTableObjs();
+    createScreenObjs();
 
     /* calculate viewport */
     resizeWindow();
@@ -172,6 +178,27 @@ function createTableObjs() {
     }
 }
 
+function createScreenObjs() {
+    if (numOfScreenObjs.value < 0) {
+        textOut.innerHTML = "Number Cannot be Negative.";
+    } else if (numOfScreenObjs.value != mostRecentNumOfScreenObjs) {
+        textOut.innerHTML = "";
+        // Load the objects
+        let xPos = -3;
+        let yPos = 0;
+        screenObjArr = [];
+        screenObjFrames = [];
+        for (let i = 0; i < numOfScreenObjs.value; i++) {
+            screenObjArr[i] = new GreenScreen(gl);
+            screenObjFrames[i] = mat4.create();
+            mat4.fromTranslation(screenObjFrames[i], vec3.fromValues(xPos, yPos, 0));
+            mat4.multiply(screenObjFrames[i], cameraCF, screenObjFrames[i]);
+        }
+        /* Fill in the drop down box. */
+        populateDropDown("screen");
+    }
+}
+
 function generateManyCameras() {
     numOfCameraObjs.value = 1000;
     textOut.innerHTML = "";
@@ -221,6 +248,18 @@ function populateDropDown(obj) {
             fragment.appendChild(option);
         });
         tableObjSelect.appendChild(fragment);
+    } else if (obj == "screen") {
+        let fragment = document.createDocumentFragment();
+        screenObjSelect = document.getElementById("screenObjSelect");
+        screenObjSelect.innerHTML = "";
+        screenObjFrames.forEach(function (currObjFrame, i) {
+            let option = document.createElement("option");
+            option.innerHTML = "Screen #" + i;
+            option.value = i;
+            option.id = "Object" + i;
+            fragment.appendChild(option);
+        });
+        screenObjSelect.appendChild(fragment);
     }
 }
 
@@ -230,6 +269,9 @@ function drawScene() {
     }
     for (let j = 0; j < tableObjArr.length; j++) {
         tableObjArr[j].draw(posAttr, colAttr, modelUnif, tableObjFrames[j]);
+    }
+    for (let l = 0; l < screenObjArr.length; l++) {
+        screenObjArr[l].draw(posAttr, colAttr, modelUnif, screenObjFrames[l]);
     }
 }
 
@@ -375,6 +417,9 @@ function moveSelectedObject(command) {
     } else if (document.getElementById("moveTableRadio").checked) {
         selectedObjType = "table";
         currentFrame = tableObjSelect.value;
+    } else if (document.getElementById("moveScreenRadio").checked) {
+        selectedObjType = "screen";
+        currentFrame = screenObjSelect.value;
     }
 
     /* The Matrices to Move */
@@ -427,6 +472,27 @@ function moveSelectedObject(command) {
                 mat4.multiply(tableObjFrames[currentFrame], transZpos, tableObjFrames[currentFrame]);
                 break;
         }
+    } else if (selectedObjType == "screen") {
+        switch (command) {
+            case "x":
+                mat4.multiply(screenObjFrames[currentFrame], transXneg, screenObjFrames[currentFrame]);
+                break;
+            case "X":
+                mat4.multiply(screenObjFrames[currentFrame], transXpos, screenObjFrames[currentFrame]);
+                break;
+            case "y":
+                mat4.multiply(screenObjFrames[currentFrame], transYneg, screenObjFrames[currentFrame]);
+                break;
+            case "Y":
+                mat4.multiply(screenObjFrames[currentFrame], transYpos, screenObjFrames[currentFrame]);
+                break;
+            case "z":
+                mat4.multiply(screenObjFrames[currentFrame], transZneg, screenObjFrames[currentFrame]);
+                break;
+            case "Z":
+                mat4.multiply(screenObjFrames[currentFrame], transZpos, screenObjFrames[currentFrame]);
+                break;
+        }
     }
 }
 
@@ -441,6 +507,9 @@ function rotateSelectedObject(command) {
     } else if (document.getElementById("moveTableRadio").checked) {
         selectedObjType = "table";
         currentFrame = tableObjSelect.value;
+    } else if (document.getElementById("moveScreenRadio").checked) {
+        selectedObjType = "screen";
+        currentFrame = screenObjSelect.value;
     }
 
     if (selectedObjType == "camera") {
@@ -483,6 +552,27 @@ function rotateSelectedObject(command) {
                 break;
             case "C":
                 mat4.rotateZ(tableObjFrames[currentFrame], tableObjFrames[currentFrame], -Math.PI / 180);
+                break;
+        }
+    } else if (selectedObjType == "screen") {
+        switch (command) {
+            case "a":
+                mat4.rotateX(screenObjFrames[currentFrame], screenObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "A":
+                mat4.rotateX(screenObjFrames[currentFrame], screenObjFrames[currentFrame], -Math.PI / 180);
+                break;
+            case "b":
+                mat4.rotateY(screenObjFrames[currentFrame], screenObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "B":
+                mat4.rotateY(screenObjFrames[currentFrame], screenObjFrames[currentFrame], -Math.PI / 180);
+                break;
+            case "c":
+                mat4.rotateZ(screenObjFrames[currentFrame], screenObjFrames[currentFrame], Math.PI / 180);
+                break;
+            case "C":
+                mat4.rotateZ(screenObjFrames[currentFrame], screenObjFrames[currentFrame], -Math.PI / 180);
                 break;
         }
     }
