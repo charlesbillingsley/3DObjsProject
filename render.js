@@ -172,6 +172,30 @@ function createTableObjs() {
     }
 }
 
+function generateManyCameras() {
+    numOfCameraObjs.value = 1000;
+    textOut.innerHTML = "";
+    let xPos = -.8;
+    let yPos = -.8;
+    cameraObjArr = [];
+    cameraObjFrames = [];
+    for (let i = 0; i < numOfCameraObjs.value; i++) {
+        cameraObjArr[i] = new Camera(gl);
+        cameraObjFrames[i] = mat4.create();
+        mat4.fromTranslation(cameraObjFrames[i], vec3.fromValues(xPos, yPos, 0));
+        mat4.multiply(cameraObjFrames[i], cameraCF, cameraObjFrames[i]);
+
+        var posOrNeg = Math.random() < 0.5 ? -1 : 1;
+        xPos += Math.random();
+        yPos += Math.random();
+        xPos *= posOrNeg;
+        yPos *= posOrNeg;
+    }
+
+    /* Fill in the drop down box. */
+    populateDropDown("camera");
+}
+
 function populateDropDown(obj) {
     if (obj == "camera") {
         let fragment = document.createDocumentFragment();
