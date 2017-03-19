@@ -29,7 +29,7 @@ class Camera {
         this.glassColor1 = vec3.fromValues(0, 1, 1);
         this.glassColor2 = vec3.fromValues(0, 0.9, .9);
 
-        // Top of the tripodS
+        // Top of the tripod
         this.triTopColor1 = vec3.fromValues(.35, .35, .65);
         this.triTopColor2 = vec3.fromValues(.35, .35, .55);
 
@@ -97,10 +97,15 @@ class Camera {
         mat4.translate (this.triLeg2Transform, this.triLeg2Transform, moveTriLegDown);
         mat4.translate (this.triLeg3Transform, this.triLeg3Transform, moveTriLegDown);
 
-        let triLeg1Angle = Math.acos(-Math.sqrt(3)/2);
+        // let triLeg1Angle = Math.acos(-Math.sqrt(3)/2);
+        // mat4.rotateX(this.triLeg1Transform, this.triLeg1Transform, triLeg1Angle);
+        // mat4.rotateY(this.triLeg2Transform, this.triLeg2Transform, triLeg1Angle);
+        // mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, -triLeg1Angle);
+
+        let triLeg1Angle = Math.PI;
         mat4.rotateX(this.triLeg1Transform, this.triLeg1Transform, triLeg1Angle);
         mat4.rotateY(this.triLeg2Transform, this.triLeg2Transform, triLeg1Angle);
-        mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, -triLeg1Angle);
+        mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, triLeg1Angle);
 
         this.blank = mat4.create();
     }
