@@ -22,6 +22,9 @@ let numOfCameraObjs, mostRecentNumOfCameraObjs;
 let numOfTableObjs, mostRecentNumOfTableObjs;
 let numOfScreenObjs, mostRecentNumOfScreenObjs;
 let textOut;
+let shouldAnimate = false;
+let timeStamp;
+let FINAL_LEG_ANGLE = Math.acos(-Math.sqrt(3)/2);
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -97,6 +100,8 @@ function main() {
 
     /* calculate viewport */
     resizeWindow();
+
+    timeStamp = Date.now();
 
     /* initiate the render loop */
     render();
@@ -327,6 +332,17 @@ function render() {
           draw3D();
           break;
   }
+
+  if (shouldAnimate) {
+      let now = Date.now();
+      let elapse = (now - timeStamp)/1000; /* convert to second */
+      timeStamp = now;
+      let triLegSpinAngle = elapse * (10 / 60) * Math.PI;
+
+      mat4.rotateX(cameraObjArr[cameraObjSelect.value].triLeg1Transform, cameraObjArr[cameraObjSelect.value].triLeg1Transform, triLegSpinAngle);
+      mat4.rotateY(cameraObjArr[cameraObjSelect.value].triLeg2Transform, cameraObjArr[cameraObjSelect.value].triLeg2Transform, triLegSpinAngle);
+      mat4.rotateY(cameraObjArr[cameraObjSelect.value].triLeg3Transform, cameraObjArr[cameraObjSelect.value].triLeg3Transform, -triLegSpinAngle);
+  }
   requestAnimationFrame(render);
 }
 
@@ -366,6 +382,9 @@ function keyboardHandler(event) {
             currentCameraView = "Right";
             render();
             break;
+        case "p":
+            timeStamp = Date.now();
+            shouldAnimate ? shouldAnimate = false : shouldAnimate = true;
         case "x":
             moveSelectedObject("x");
             break;
