@@ -80,3 +80,13 @@ select option {
 .signiture {
     color: #51ac7d;
 }
+
+.leftContainer {
+    margin-top: 10px;
+    float: left;
+}
+
+.rightContainer {
+    margin-left: 20px;
+    float: left;
+}
