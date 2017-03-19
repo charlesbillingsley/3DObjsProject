@@ -43,8 +43,6 @@ class Cube2 {
         {
             vertices.push(this.vex[k][0], this.vex[k][1], this.vex[k][2]);
             vertices.push(this.color[k][0], this.color[k][1], this.color[k][2]);
-            // vec3.lerp (randColor, col1, col2, Math.random()); /* linear interpolation between two colors */
-            // vertices.push(randColor[0], randColor[1], randColor[2]);
         }
         this.vbuff = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
