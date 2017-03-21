@@ -25,6 +25,7 @@ let textOut;
 let shouldAnimate = false;
 let paused = false;
 let timeStamp, timeStart;
+let triStretch = 0;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -341,9 +342,20 @@ function render() {
           timeStamp = now;
           let triLegSpinAngle = -elapse * (10 / 60) * Math.PI;
           let camera = cameraObjArr[cameraObjSelect.value];
+
+          if (triStretch < 4) {
+              triStretch += elapse;
+              let stretchTriLeg = vec3.fromValues(1, 1, 1.01);
+              mat4.scale(camera.triLeg1Transform, camera.triLeg1Transform, stretchTriLeg);
+              mat4.scale(camera.triLeg2Transform, camera.triLeg2Transform, stretchTriLeg);
+              mat4.scale(camera.triLeg3Transform, camera.triLeg3Transform, stretchTriLeg);
+          }
+
           mat4.rotateX(camera.triLeg1Transform, camera.triLeg1Transform, triLegSpinAngle);
           mat4.rotateY(camera.triLeg2Transform, camera.triLeg2Transform, triLegSpinAngle);
           mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, -triLegSpinAngle);
+
+          mat4.rotateZ(camera.lensTransform, camera.lensTransform, triLegSpinAngle);
       } else {
           shouldAnimate = false;
           paused = false;
@@ -398,9 +410,10 @@ function keyboardHandler(event) {
                     // Reset time counters
                     timeStamp = Date.now();
                     timeStart = Date.now();
+                    triStretch = 0;
                     paused = false;
 
-                    // Reset the selected camera's legs]
+                    // Reset the selected camera's legs
                     let camera = cameraObjArr[cameraObjSelect.value];
                     // Tripod legs
                     camera.triLeg1Transform = mat4.create();
@@ -408,7 +421,6 @@ function keyboardHandler(event) {
                     camera.triLeg3Transform = mat4.create();
 
                     let moveTriLegDown = vec3.fromValues(0, 0, -.25);
-
                     mat4.translate(camera.triLeg1Transform, camera.triLeg1Transform, moveTriLegDown);
                     mat4.translate(camera.triLeg2Transform, camera.triLeg2Transform, moveTriLegDown);
                     mat4.translate(camera.triLeg3Transform, camera.triLeg3Transform, moveTriLegDown);
