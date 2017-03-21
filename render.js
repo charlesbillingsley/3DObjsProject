@@ -345,7 +345,7 @@ function render() {
 
           if (triStretch < 4) {
               triStretch += elapse;
-              let stretchTriLeg = vec3.fromValues(1, 1, 1.01);
+              let stretchTriLeg = vec3.fromValues(1, 1, 1.03);
               mat4.scale(camera.triLeg1Transform, camera.triLeg1Transform, stretchTriLeg);
               mat4.scale(camera.triLeg2Transform, camera.triLeg2Transform, stretchTriLeg);
               mat4.scale(camera.triLeg3Transform, camera.triLeg3Transform, stretchTriLeg);
@@ -428,7 +428,12 @@ function keyboardHandler(event) {
                     let triLegAngle = Math.PI;
                     mat4.rotateX(camera.triLeg1Transform, camera.triLeg1Transform, triLegAngle);
                     mat4.rotateY(camera.triLeg2Transform, camera.triLeg2Transform, triLegAngle);
-                    mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, triLegAngle);
+                    mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, -triLegAngle);
+
+                    let stretchTriLeg = vec3.fromValues(1, 1, 4);
+                    mat4.scale(this.triLeg1Transform, this.triLeg1Transform, stretchTriLeg);
+                    mat4.scale(this.triLeg2Transform, this.triLeg2Transform, stretchTriLeg);
+                    mat4.scale(this.triLeg3Transform, this.triLeg3Transform, stretchTriLeg);
                 // }
             }
 
