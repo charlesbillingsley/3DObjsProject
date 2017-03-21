@@ -97,15 +97,10 @@ class Camera {
         mat4.translate (this.triLeg2Transform, this.triLeg2Transform, moveTriLegDown);
         mat4.translate (this.triLeg3Transform, this.triLeg3Transform, moveTriLegDown);
 
-        // let triLeg1Angle = Math.acos(-Math.sqrt(3)/2);
-        // mat4.rotateX(this.triLeg1Transform, this.triLeg1Transform, triLeg1Angle);
-        // mat4.rotateY(this.triLeg2Transform, this.triLeg2Transform, triLeg1Angle);
-        // mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, -triLeg1Angle);
-
-        let triLeg1Angle = Math.PI;
-        mat4.rotateX(this.triLeg1Transform, this.triLeg1Transform, triLeg1Angle);
-        mat4.rotateY(this.triLeg2Transform, this.triLeg2Transform, triLeg1Angle);
-        mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, triLeg1Angle);
+        let triLegAngle = Math.PI;
+        mat4.rotateX(this.triLeg1Transform, this.triLeg1Transform, triLegAngle);
+        mat4.rotateY(this.triLeg2Transform, this.triLeg2Transform, triLegAngle);
+        mat4.rotateY(this.triLeg3Transform, this.triLeg3Transform, triLegAngle);
 
         this.blank = mat4.create();
     }

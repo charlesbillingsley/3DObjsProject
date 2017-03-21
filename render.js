@@ -23,8 +23,8 @@ let numOfTableObjs, mostRecentNumOfTableObjs;
 let numOfScreenObjs, mostRecentNumOfScreenObjs;
 let textOut;
 let shouldAnimate = false;
-let timeStamp;
-let FINAL_LEG_ANGLE = Math.acos(-Math.sqrt(3)/2);
+let paused = false;
+let timeStamp, timeStart;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -335,13 +335,19 @@ function render() {
 
   if (shouldAnimate) {
       let now = Date.now();
-      let elapse = (now - timeStamp)/1000; /* convert to second */
-      timeStamp = now;
-      let triLegSpinAngle = elapse * (10 / 60) * Math.PI;
-
-      mat4.rotateX(cameraObjArr[cameraObjSelect.value].triLeg1Transform, cameraObjArr[cameraObjSelect.value].triLeg1Transform, triLegSpinAngle);
-      mat4.rotateY(cameraObjArr[cameraObjSelect.value].triLeg2Transform, cameraObjArr[cameraObjSelect.value].triLeg2Transform, triLegSpinAngle);
-      mat4.rotateY(cameraObjArr[cameraObjSelect.value].triLeg3Transform, cameraObjArr[cameraObjSelect.value].triLeg3Transform, -triLegSpinAngle);
+      if (now/1000 - timeStart/1000 <= 1) {
+          let elapse = (now - timeStamp) / 1000;
+          /* convert to second */
+          timeStamp = now;
+          let triLegSpinAngle = -elapse * (10 / 60) * Math.PI;
+          let camera = cameraObjArr[cameraObjSelect.value];
+          mat4.rotateX(camera.triLeg1Transform, camera.triLeg1Transform, triLegSpinAngle);
+          mat4.rotateY(camera.triLeg2Transform, camera.triLeg2Transform, triLegSpinAngle);
+          mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, -triLegSpinAngle);
+      } else {
+          shouldAnimate = false;
+          paused = false;
+      }
   }
   requestAnimationFrame(render);
 }
@@ -383,8 +389,39 @@ function keyboardHandler(event) {
             render();
             break;
         case "p":
-            timeStamp = Date.now();
-            shouldAnimate ? shouldAnimate = false : shouldAnimate = true;
+            if (shouldAnimate) {
+                shouldAnimate = false;
+                paused = true;
+            } else {
+                shouldAnimate = true;
+                // if (!paused) {
+                    // Reset time counters
+                    timeStamp = Date.now();
+                    timeStart = Date.now();
+                    paused = false;
+
+                    // Reset the selected camera's legs]
+                    let camera = cameraObjArr[cameraObjSelect.value];
+                    // Tripod legs
+                    camera.triLeg1Transform = mat4.create();
+                    camera.triLeg2Transform = mat4.create();
+                    camera.triLeg3Transform = mat4.create();
+
+                    let moveTriLegDown = vec3.fromValues(0, 0, -.25);
+
+                    mat4.translate(camera.triLeg1Transform, camera.triLeg1Transform, moveTriLegDown);
+                    mat4.translate(camera.triLeg2Transform, camera.triLeg2Transform, moveTriLegDown);
+                    mat4.translate(camera.triLeg3Transform, camera.triLeg3Transform, moveTriLegDown);
+
+                    let triLegAngle = Math.PI;
+                    mat4.rotateX(camera.triLeg1Transform, camera.triLeg1Transform, triLegAngle);
+                    mat4.rotateY(camera.triLeg2Transform, camera.triLeg2Transform, triLegAngle);
+                    mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, triLegAngle);
+                // }
+            }
+
+            render();
+            break;
         case "x":
             moveSelectedObject("x");
             break;
