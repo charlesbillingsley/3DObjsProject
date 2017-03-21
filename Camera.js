@@ -44,9 +44,9 @@ class Camera {
         this.lens = new Ring(gl, 0.13, 0.08, 0.2, 30, 1, this.lensColor1, this.lensColor2);
         this.glass = new Sphere(gl, 0.1, 15, this.glassColor1, this.glassColor2);
         this.tripodTop = new Sphere(gl, 0.07, 15, this.triTopColor1, this.triTopColor2);
-        this.tripodLeg1 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
-        this.tripodLeg2 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
-        this.tripodLeg3 = new Cylinder(gl, .01, .04, 1, 20, 1, this.triLegsColor1, this.triLegsColor2);
+        this.tripodLeg1 = new Cylinder(gl, .01, .04, .25, 20, 1, this.triLegsColor1, this.triLegsColor2);
+        this.tripodLeg2 = new Cylinder(gl, .01, .04, .25, 20, 1, this.triLegsColor1, this.triLegsColor2);
+        this.tripodLeg3 = new Cylinder(gl, .01, .04, .25, 20, 1, this.triLegsColor1, this.triLegsColor2);
 
         /** Create the transforms */
         // Camera Body
@@ -92,7 +92,6 @@ class Camera {
         this.triLeg3Transform = mat4.create();
 
         let moveTriLegDown = vec3.fromValues(0, 0, -.25);
-
         mat4.translate (this.triLeg1Transform, this.triLeg1Transform, moveTriLegDown);
         mat4.translate (this.triLeg2Transform, this.triLeg2Transform, moveTriLegDown);
         mat4.translate (this.triLeg3Transform, this.triLeg3Transform, moveTriLegDown);
