@@ -25,7 +25,6 @@ let textOut;
 let shouldAnimate = false;
 let paused = false;
 let timeStamp, timeStart;
-let triStretch = 0;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -340,22 +339,10 @@ function render() {
           let elapse = (now - timeStamp) / 1000;
           /* convert to second */
           timeStamp = now;
-          let triLegSpinAngle = -elapse * (10 / 60) * Math.PI;
+          let lenseSpinAngle = -elapse * (10 / 60) * Math.PI;
           let camera = cameraObjArr[cameraObjSelect.value];
 
-          if (triStretch < 4) {
-              triStretch += elapse;
-              let stretchTriLeg = vec3.fromValues(1, 1, 1.03);
-              mat4.scale(camera.triLeg1Transform, camera.triLeg1Transform, stretchTriLeg);
-              mat4.scale(camera.triLeg2Transform, camera.triLeg2Transform, stretchTriLeg);
-              mat4.scale(camera.triLeg3Transform, camera.triLeg3Transform, stretchTriLeg);
-          }
-
-          mat4.rotateX(camera.triLeg1Transform, camera.triLeg1Transform, triLegSpinAngle);
-          mat4.rotateY(camera.triLeg2Transform, camera.triLeg2Transform, triLegSpinAngle);
-          mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, -triLegSpinAngle);
-
-          mat4.rotateZ(camera.lensTransform, camera.lensTransform, triLegSpinAngle);
+          mat4.rotateZ(camera.lensTransform, camera.lensTransform, lenseSpinAngle);
       } else {
           shouldAnimate = false;
           paused = false;
@@ -403,40 +390,10 @@ function keyboardHandler(event) {
         case "p":
             if (shouldAnimate) {
                 shouldAnimate = false;
-                paused = true;
             } else {
+                timeStart = Date.now();
                 shouldAnimate = true;
-                // if (!paused) {
-                    // Reset time counters
-                    timeStamp = Date.now();
-                    timeStart = Date.now();
-                    triStretch = 0;
-                    paused = false;
-
-                    // Reset the selected camera's legs
-                    let camera = cameraObjArr[cameraObjSelect.value];
-                    // Tripod legs
-                    camera.triLeg1Transform = mat4.create();
-                    camera.triLeg2Transform = mat4.create();
-                    camera.triLeg3Transform = mat4.create();
-
-                    let moveTriLegDown = vec3.fromValues(0, 0, -.25);
-                    mat4.translate(camera.triLeg1Transform, camera.triLeg1Transform, moveTriLegDown);
-                    mat4.translate(camera.triLeg2Transform, camera.triLeg2Transform, moveTriLegDown);
-                    mat4.translate(camera.triLeg3Transform, camera.triLeg3Transform, moveTriLegDown);
-
-                    let triLegAngle = Math.PI;
-                    mat4.rotateX(camera.triLeg1Transform, camera.triLeg1Transform, triLegAngle);
-                    mat4.rotateY(camera.triLeg2Transform, camera.triLeg2Transform, triLegAngle);
-                    mat4.rotateY(camera.triLeg3Transform, camera.triLeg3Transform, -triLegAngle);
-
-                    let stretchTriLeg = vec3.fromValues(1, 1, 4);
-                    mat4.scale(this.triLeg1Transform, this.triLeg1Transform, stretchTriLeg);
-                    mat4.scale(this.triLeg2Transform, this.triLeg2Transform, stretchTriLeg);
-                    mat4.scale(this.triLeg3Transform, this.triLeg3Transform, stretchTriLeg);
-                // }
             }
-
             render();
             break;
         case "x":

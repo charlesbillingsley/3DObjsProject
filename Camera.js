@@ -37,6 +37,10 @@ class Camera {
         this.triLegsColor1 = vec3.fromValues(.35, .35, .35);
         this.triLegsColor2 = vec3.fromValues(.45, .45, .60);
 
+        // Tripod Wheels
+        this.triWheelsColor1 = vec3.fromValues(.5, .5, .7);
+        this.triWheelsColor2 = vec3.fromValues(.6, .6, .8);
+
         /** Create the objects */
         this.body = new Cube2(gl, 0.3, 4, this.bodyColor1, this.bodyColor2, this.bodyColor3);
         this.flash = new Cube2(gl, 0.1, 4, this.flashColor1, this.flashColor2, this.flashColor3);
@@ -47,6 +51,10 @@ class Camera {
         this.tripodLeg1 = new Cylinder(gl, .01, .04, .25, 20, 1, this.triLegsColor1, this.triLegsColor2);
         this.tripodLeg2 = new Cylinder(gl, .01, .04, .25, 20, 1, this.triLegsColor1, this.triLegsColor2);
         this.tripodLeg3 = new Cylinder(gl, .01, .04, .25, 20, 1, this.triLegsColor1, this.triLegsColor2);
+        this.tripodWheel1 = new Ring(gl, 0.10, 0.05, 0.1, 30, 1, this.triWheelsColor1, this.triWheelsColor2);
+        this.tripodWheel2 = new Ring(gl, 0.10, 0.05, 0.1, 30, 1, this.triWheelsColor1, this.triWheelsColor2);
+        this.tripodWheel3 = new Ring(gl, 0.10, 0.05, 0.1, 30, 1, this.triWheelsColor1, this.triWheelsColor2);
+        this.tripodWheel4 = new Ring(gl, 0.10, 0.05, 0.1, 30, 1, this.triWheelsColor1, this.triWheelsColor2);
 
         /** Create the transforms */
         // Camera Body
@@ -106,6 +114,30 @@ class Camera {
         mat4.scale(this.triLeg2Transform, this.triLeg2Transform, stretchTriLeg);
         mat4.scale(this.triLeg3Transform, this.triLeg3Transform, stretchTriLeg);
 
+        // Tripod Wheels
+        this.triWheel1Transform = mat4.create();
+        this.triWheel2Transform = mat4.create();
+        this.triWheel3Transform = mat4.create();
+        this.triWheel4Transform = mat4.create();
+
+        let moveTriWheelDown = vec3.fromValues(.01, -.5, -1.1);
+        mat4.translate (this.triWheel1Transform, this.triWheel1Transform, moveTriWheelDown);
+
+        moveTriWheelDown = vec3.fromValues(.5, 0, -1.1);
+        mat4.translate (this.triWheel2Transform, this.triWheel2Transform, moveTriWheelDown);
+
+        moveTriWheelDown = vec3.fromValues(-.6, 0, -1.1);
+        mat4.translate (this.triWheel3Transform, this.triWheel3Transform, moveTriWheelDown);
+
+        moveTriWheelDown = vec3.fromValues(-.11, -.5, -1.1);
+        mat4.translate (this.triWheel4Transform, this.triWheel4Transform, moveTriWheelDown);
+
+        let triWheelAngle = Math.PI/2;
+        mat4.rotateY(this.triWheel1Transform, this.triWheel1Transform, triWheelAngle);
+        mat4.rotateY(this.triWheel2Transform, this.triWheel2Transform, triWheelAngle);
+        mat4.rotateY(this.triWheel3Transform, this.triWheel3Transform, triWheelAngle);
+        mat4.rotateY(this.triWheel4Transform, this.triWheel4Transform, triWheelAngle);
+
         this.blank = mat4.create();
     }
 
@@ -128,6 +160,19 @@ class Camera {
 
         mat4.mul(this.blank, coordFrame, this.triLeg3Transform);
         this.tripodLeg3.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
+        // Tripod Wheels
+        mat4.mul(this.blank, coordFrame, this.triWheel1Transform);
+        this.tripodWheel1.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
+        mat4.mul(this.blank, coordFrame, this.triWheel2Transform);
+        this.tripodWheel2.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
+        mat4.mul(this.blank, coordFrame, this.triWheel3Transform);
+        this.tripodWheel3.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+
+        mat4.mul(this.blank, coordFrame, this.triWheel4Transform);
+        this.tripodWheel4.draw(vertexAttr, colorAttr, modelUniform, this.blank);
 
         // Top of the tripod
         mat4.mul(this.blank, coordFrame, this.triTopTransform);
