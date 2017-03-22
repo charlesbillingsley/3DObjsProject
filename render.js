@@ -110,6 +110,9 @@ function main() {
 }
 
 function createCameraObjs() {
+    shouldAnimate = false;
+    paused = false;
+    forward = true;
     if (numOfCameraObjs.value < 0) {
         textOut.innerHTML = "Number Cannot be Negative.";
     } else if (numOfCameraObjs.value != mostRecentNumOfCameraObjs) {

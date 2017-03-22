@@ -23,7 +23,7 @@
     <div class="leftContainer">
         <div>
             <span>Choose Which Camera to Move: &nbsp &nbsp &nbsp &nbsp</span>
-            <select id="cameraObjSelect" name="cameraObjSelect"></select>
+            <select id="cameraObjSelect" name="cameraObjSelect" onblur="shouldAnimate = false; paused = false; forward = true;"></select>
             <input type="radio" id="moveCameraRadio" name="radio" value="camera">
             <label for="moveCameraRadio">Move Camera &nbsp</label>
             <button id="generateManyCamerasButton" onclick="generateManyCameras()">Generate 1000 Cameras</button><br>
