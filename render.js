@@ -24,6 +24,7 @@ let numOfScreenObjs, mostRecentNumOfScreenObjs;
 let textOut;
 let shouldAnimate = false;
 let paused = false;
+let forward = true;
 let timeStamp, timeStart;
 
 function main() {
@@ -339,13 +340,42 @@ function render() {
           let elapse = (now - timeStamp) / 1000;
           /* convert to second */
           timeStamp = now;
-          let lenseSpinAngle = -elapse * (10 / 60) * Math.PI;
+          let spinAngle = -elapse * (10 / 60) * Math.PI;
           let camera = cameraObjArr[cameraObjSelect.value];
 
-          mat4.rotateZ(camera.lensTransform, camera.lensTransform, lenseSpinAngle);
+          // Spin lens
+          mat4.rotateZ(camera.lensTransform, camera.lensTransform, spinAngle);
+
+          let cameraFrame;
+
+          if (forward) {
+              // Spin Wheels
+              mat4.rotateZ(camera.triWheel1Transform, camera.triWheel1Transform, spinAngle);
+              mat4.rotateZ(camera.triWheel2Transform, camera.triWheel2Transform, spinAngle);
+              mat4.rotateZ(camera.triWheel3Transform, camera.triWheel3Transform, spinAngle);
+              mat4.rotateZ(camera.triWheel4Transform, camera.triWheel4Transform, spinAngle);
+
+              // Translate camera
+              cameraFrame = cameraObjSelect.value;
+              const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.01, 0, 0));
+              mat4.multiply(cameraObjFrames[cameraFrame], transXneg, cameraObjFrames[cameraFrame]);
+          } else {
+              // Spin Wheels
+              mat4.rotateZ(camera.triWheel1Transform, camera.triWheel1Transform, -spinAngle);
+              mat4.rotateZ(camera.triWheel2Transform, camera.triWheel2Transform, -spinAngle);
+              mat4.rotateZ(camera.triWheel3Transform, camera.triWheel3Transform, -spinAngle);
+              mat4.rotateZ(camera.triWheel4Transform, camera.triWheel4Transform, -spinAngle);
+
+              // Translate camera
+              cameraFrame = cameraObjSelect.value;
+              const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(.01, 0, 0));
+              mat4.multiply(cameraObjFrames[cameraFrame], transXpos, cameraObjFrames[cameraFrame]);
+          }
+
       } else {
           shouldAnimate = false;
           paused = false;
+          forward ? forward = false : forward = true;
       }
   }
   requestAnimationFrame(render);
@@ -390,9 +420,11 @@ function keyboardHandler(event) {
         case "p":
             if (shouldAnimate) {
                 shouldAnimate = false;
+                paused = true;
             } else {
-                timeStart = Date.now();
                 shouldAnimate = true;
+                timeStart = Date.now();
+                timeStamp = Date.now();
             }
             render();
             break;
