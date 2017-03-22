@@ -26,6 +26,7 @@ let shouldAnimate = false;
 let paused = false;
 let forward = true;
 let timeStamp, timeStart;
+let speed = 10;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -343,11 +344,11 @@ function render() {
           let elapse = (now - timeStamp) / 1000;
           /* convert to second */
           timeStamp = now;
-          let spinAngle = -elapse * (10 / 60) * Math.PI;
+          let spinAngle = -elapse * (speed/60) * Math.PI;
           let camera = cameraObjArr[cameraObjSelect.value];
 
           // Spin lens
-          mat4.rotateZ(camera.lensTransform, camera.lensTransform, spinAngle);
+          mat4.rotateZ(camera.lensTransform, camera.lensTransform, spinAngle * 2);
 
           let cameraFrame;
 
@@ -360,7 +361,7 @@ function render() {
 
               // Translate camera
               cameraFrame = cameraObjSelect.value;
-              const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.01, 0, 0));
+              const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(spinAngle, 0, 0));
               mat4.multiply(cameraObjFrames[cameraFrame], transXneg, cameraObjFrames[cameraFrame]);
           } else {
               // Spin Wheels
@@ -371,7 +372,7 @@ function render() {
 
               // Translate camera
               cameraFrame = cameraObjSelect.value;
-              const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(.01, 0, 0));
+              const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(-spinAngle, 0, 0));
               mat4.multiply(cameraObjFrames[cameraFrame], transXpos, cameraObjFrames[cameraFrame]);
           }
 
@@ -430,6 +431,12 @@ function keyboardHandler(event) {
                 timeStamp = Date.now();
             }
             render();
+            break;
+        case "o":
+            speed += 10;
+            break;
+        case "i":
+            speed -= 10;
             break;
         case "x":
             moveSelectedObject("x");
