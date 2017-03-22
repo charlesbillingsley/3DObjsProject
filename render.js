@@ -7,7 +7,7 @@
  */
 let canvas;
 let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF;
-let currentCameraView;
+let currentCameraView = "3D";
 let posAttr, colAttr;
 let modelUnif, viewUnif, projUnif;
 let gl;
@@ -35,7 +35,7 @@ function main() {
 
   /* setup window resize listener */
   window.addEventListener('resize', resizeWindow);
-  window.addEventListener("keypress", keyboardHandler, false);
+  window.addEventListener("keydown", keyboardHandler, false);
 
   ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
   .then (prog => {
@@ -317,6 +317,72 @@ function drawRightView() {
     drawScene();
 }
 
+function moveView(currentCameraView, command) {
+    let currMat;
+    /* The Matrices to Move */
+    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( .5, 0, 0));
+    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-.5, 0, 0));
+    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, .5, 0));
+    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-.5, 0));
+    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, .5));
+    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-.5));
+
+    switch (currentCameraView) {
+        case "3D":
+            currMat = viewMat;
+            break;
+        case "Top":
+            currMat = topViewMat;
+            break;
+        case "Front":
+            currMat = frontViewMat;
+            break;
+        case "Right":
+            currMat = rightViewMat;
+            break;
+        default:
+            break;
+    }
+    switch (command) {
+        case "s":
+            mat4.rotateX(currMat, currMat, Math.PI/180);
+            break;
+        case "S":
+            mat4.rotateX(currMat, currMat, -Math.PI/180);
+            break;
+        case "d":
+            mat4.rotateY(currMat, currMat, Math.PI/180);
+            break;
+        case "D":
+            mat4.rotateY(currMat, currMat, -Math.PI/180);
+            break;
+        case "f":
+            mat4.rotateZ(currMat, currMat, Math.PI/180);
+            break;
+        case "F":
+            mat4.rotateZ(currMat, currMat, -Math.PI/180);
+            break;
+        case "w":
+            mat4.multiply(currMat, transXneg, currMat);
+            break;
+        case "W":
+            mat4.multiply(currMat, transXpos, currMat);
+            break;
+        case "e":
+            mat4.multiply(currMat, transYneg, currMat);
+            break;
+        case "E":
+            mat4.multiply(currMat, transYpos, currMat);
+            break;
+        case "r":
+            mat4.multiply(currMat, transZneg, currMat);
+            break;
+        case "R":
+            mat4.multiply(currMat, transZpos, currMat);
+            break;
+    }
+}
+
 
 function render() {
   gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
@@ -473,6 +539,42 @@ function keyboardHandler(event) {
             break;
         case "C":
             rotateSelectedObject("C");
+            break;
+        case "s":
+            moveView(currentCameraView, "s");
+            break;
+        case "S":
+            moveView(currentCameraView, "S");
+            break;
+        case "d":
+            moveView(currentCameraView, "d");
+            break;
+        case "D":
+            moveView(currentCameraView, "D");
+            break;
+        case "f":
+            moveView(currentCameraView, "f");
+            break;
+        case "F":
+            moveView(currentCameraView, "F");
+            break;
+        case "w":
+            moveView(currentCameraView, "w");
+            break;
+        case "W":
+            moveView(currentCameraView, "W");
+            break;
+        case "e":
+            moveView(currentCameraView, "e");
+            break;
+        case "E":
+            moveView(currentCameraView, "E");
+            break;
+        case "r":
+            moveView(currentCameraView, "r");
+            break;
+        case "R":
+            moveView(currentCameraView, "R");
             break;
     }
 }
