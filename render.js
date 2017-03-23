@@ -8,9 +8,10 @@
 let canvas;
 let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF;
 let currentCameraView;
-let posAttr, colAttr;
+let posAttr, colAttr, normAttr;
 let modelUnif, viewUnif, projUnif;
 let gl;
+let lightDirection;
 let cameraObjArr = [];
 let tableObjArr = [];
 let screenObjArr = [];
@@ -41,13 +42,15 @@ function main() {
   .then (prog => {
     /* put all one-time initialization logic here */
     gl.useProgram (prog);
-    gl.clearColor (0, 0, 0, 1);
+    gl.clearColor (1, 0, 0, 1);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
 
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
+    normAttr = gl.getUniformLocation(prog, "normal");
+    lightDirection = gl.getUniformLocation(prog, "light");
     projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
     modelUnif = gl.getUniformLocation (prog, "modelCF");
@@ -88,6 +91,8 @@ function main() {
 
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
 
+    gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 1]);
+    gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
     numOfCameraObjs = document.getElementById("numOfCameraObjs");
     mostRecentNumOfCameraObjs = -1;
@@ -275,13 +280,13 @@ function populateDropDown(obj) {
 
 function drawScene() {
     for (let k = 0; k < cameraObjArr.length; k++) {
-        cameraObjArr[k].draw(posAttr, colAttr, modelUnif, cameraObjFrames[k]);
+        cameraObjArr[k].draw(posAttr, colAttr, normAttr, modelUnif, cameraObjFrames[k]);
     }
     for (let j = 0; j < tableObjArr.length; j++) {
-        tableObjArr[j].draw(posAttr, colAttr, modelUnif, tableObjFrames[j]);
+        tableObjArr[j].draw(posAttr, colAttr, normAttr, modelUnif, tableObjFrames[j]);
     }
     for (let l = 0; l < screenObjArr.length; l++) {
-        screenObjArr[l].draw(posAttr, colAttr, modelUnif, screenObjFrames[l]);
+        screenObjArr[l].draw(posAttr, colAttr, normAttr, modelUnif, screenObjFrames[l]);
     }
 }
 

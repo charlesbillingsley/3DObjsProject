@@ -21,6 +21,7 @@ class Cylinder {
         if (typeof col2 === "undefined") col2 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         let randColor = vec3.create();
         let vertices = [];
+        let normal = [];
         this.vbuff = gl.createBuffer();
 
         /* Instead of allocating two separate JS arrays (one for position and one for color),
@@ -59,6 +60,16 @@ class Cylinder {
         /* copy the (x,y,z,r,g,b) sixtuplet into GPU buffer */
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
+
+        //Normals
+        for (let k = 0; k < vertices.length; k++){
+            normal.push(vertices[k] * -1);
+        }
+
+        this.nbuff = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
+        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(normal), gl.STATIC_DRAW);
+
 
         // Generate index order for top of cylinder
         let topIndex = [];
@@ -118,7 +129,7 @@ class Cylinder {
      * @param {Number} modelUniform a handle to a mat4 uniform in the shader for the coordinate frame of the model
      * @param {mat4} coordFrame a JS mat4 variable that holds the actual coordinate frame of the object
      */
-    draw(vertexAttr, colorAttr, modelUniform, coordFrame) {
+    draw(vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
         /* copy the coordinate frame matrix to the uniform memory in shader */
         gl.uniformMatrix4fv(modelUniform, false, coordFrame);
 
@@ -129,6 +140,8 @@ class Cylinder {
          the stride distance between one group to the next is 24 bytes */
         gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0); /* (x,y,z) begins at offset 0 */
         gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
+
+        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
 
         for (let k = 0; k < this.indices.length; k++) {
             let obj = this.indices[k];

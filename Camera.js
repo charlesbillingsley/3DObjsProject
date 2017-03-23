@@ -141,54 +141,54 @@ class Camera {
         this.blank = mat4.create();
     }
 
-    draw (vertexAttr, colorAttr, modelUniform, coordFrame) {
+    draw (vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
 
         // Camera Lens
         mat4.mul(this.blank, coordFrame, this.lensTransform);
-        this.lens.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.lens.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Glass on lens
         mat4.mul(this.blank, coordFrame, this.glassTransform);
-        this.glass.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.glass.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Tripod Legs
         mat4.mul(this.blank, coordFrame, this.triLeg1Transform);
-        this.tripodLeg1.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodLeg1.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.triLeg2Transform);
-        this.tripodLeg2.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodLeg2.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.triLeg3Transform);
-        this.tripodLeg3.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodLeg3.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Tripod Wheels
         mat4.mul(this.blank, coordFrame, this.triWheel1Transform);
-        this.tripodWheel1.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodWheel1.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.triWheel2Transform);
-        this.tripodWheel2.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodWheel2.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.triWheel3Transform);
-        this.tripodWheel3.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodWheel3.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         mat4.mul(this.blank, coordFrame, this.triWheel4Transform);
-        this.tripodWheel4.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodWheel4.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Top of the tripod
         mat4.mul(this.blank, coordFrame, this.triTopTransform);
-        this.tripodTop.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.tripodTop.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Flash
         mat4.mul(this.blank, coordFrame, this.flashTransform);
-        this.flash.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.flash.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Flash Glass
         mat4.mul(this.blank, coordFrame, this.flashGlassTransform);
-        this.flashGlass.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.flashGlass.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
         // Camera Body
         mat4.mul(this.blank, coordFrame, this.bodyTransform);
-        this.body.draw(vertexAttr, colorAttr, modelUniform, this.blank);
+        this.body.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
 
     }
 }
