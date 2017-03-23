@@ -17,6 +17,7 @@ class Cube2 {
         if (typeof col2 === "undefined") col2 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         if (typeof col3 === "undefined") col3 = vec3.fromValues(Math.random(), Math.random(), Math.random());
         let randColor = vec3.create();
+        let normal = [];
 
         this.vex = [
             vec3.fromValues(-size / 2, -size / 2, +size / 2),  // 0
@@ -29,8 +30,9 @@ class Cube2 {
             vec3.fromValues(-size / 2, +size / 2, -size / 2)   // 7
         ];
 
-        //Normal vectors
-        this.normal = [
+
+
+        /*this.normal = [
             // Front
             0.0,  0.0,  1.0,
             0.0,  0.0,  1.0,
@@ -67,12 +69,9 @@ class Cube2 {
             -1.0,  0.0,  0.0,
             -1.0,  0.0,  0.0
 
-        ];
+        ];*/
 
-        //Normal buffer
-        this.nbuff = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
-        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(this.normal), gl.STATIC_DRAW);
+
 
         this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
 
@@ -98,6 +97,16 @@ class Cube2 {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuff);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(this.index), gl.STATIC_DRAW)
         this.indices = [{primitive: gl.TRIANGLES, buffer: ibuff, numPoints: this.index.length}];
+
+        //Normal vectors
+        for (let k = 0; k < vertices.length; k ++){
+            normal.push(vertices[k] * -1);
+        }
+
+        //Normal buffer
+        this.nbuff = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
+        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(normal), gl.STATIC_DRAW);
     }
 
     split (N, a, b, c, d, col) {
@@ -157,7 +166,7 @@ class Cube2 {
         gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
 
         //Normal AttribPointer
-        //gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
         gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
 
 

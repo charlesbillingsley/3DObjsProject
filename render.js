@@ -49,7 +49,7 @@ function main() {
 
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
-    normAttr = gl.getUniformLocation(prog, "normal");
+    normAttr = gl.getUniformLocation(prog, "uColor");
     lightDirection = gl.getUniformLocation(prog, "light");
     projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
@@ -91,7 +91,9 @@ function main() {
 
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
 
-    gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 1]);
+    gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
+    direction = vec3.normalize(1, 0.5, 0.2);
+    //vec3.nomr
     gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
     numOfCameraObjs = document.getElementById("numOfCameraObjs");
