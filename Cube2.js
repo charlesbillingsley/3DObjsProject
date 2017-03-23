@@ -28,6 +28,52 @@ class Cube2 {
             vec3.fromValues(+size / 2, +size / 2, -size / 2),  // 6
             vec3.fromValues(-size / 2, +size / 2, -size / 2)   // 7
         ];
+
+        //Normal vectors
+        this.normal = [
+            // Front
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+
+            // Back
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+
+            // Top
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+
+            // Bottom
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+
+            // Right
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+
+            // Left
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0
+
+        ];
+
+        //Normal buffer
+        this.nbuff = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
+        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(this.normal), gl.STATIC_DRAW);
+
         this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
 
         this.index = [];
@@ -98,7 +144,7 @@ class Cube2 {
      * @param {Number} modelUniform a handle to a mat4 uniform in the shader for the coordinate frame of the model
      * @param {mat4} coordFrame a JS mat4 variable that holds the actual coordinate frame of the object
      */
-    draw(vertexAttr, colorAttr, modelUniform, coordFrame) {
+    draw(vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
         /* copy the coordinate frame matrix to the uniform memory in shader */
         gl.uniformMatrix4fv(modelUniform, false, coordFrame);
 
@@ -109,6 +155,12 @@ class Cube2 {
          the stride distance between one group to the next is 24 bytes */
         gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0); /* (x,y,z) begins at offset 0 */
         gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
+
+        //Normal AttribPointer
+        //gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
+        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
+
+
 
         for (let k = 0; k < this.indices.length; k++) {
             let obj = this.indices[k];

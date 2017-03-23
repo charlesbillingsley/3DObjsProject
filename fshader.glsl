@@ -15,7 +15,7 @@ void main() {
    vec3 normal = normalize(vnormal);
    float light = dot(normal, lightDirection);
 
-   gl_FragColor = uColor;
+   //gl_FragColor = uColor;
 
    gl_FragColor.rgb *= light;
 }
