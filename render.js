@@ -30,89 +30,89 @@ let timeStamp, timeStart;
 let speed = 10;
 
 function main() {
-  canvas = document.getElementById("gl-canvas");
-  textOut = document.getElementById("message");
-  gl = WebGLUtils.setupWebGL(canvas, null);
+    canvas = document.getElementById("gl-canvas");
+    textOut = document.getElementById("message");
+    gl = WebGLUtils.setupWebGL(canvas, null);
 
-  /* setup window resize listener */
-  window.addEventListener('resize', resizeWindow);
-  window.addEventListener("keydown", keyboardHandler, false);
+    /* setup window resize listener */
+    window.addEventListener('resize', resizeWindow);
+    window.addEventListener("keydown", keyboardHandler, false);
 
-  ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
-  .then (prog => {
-    /* put all one-time initialization logic here */
-    gl.useProgram (prog);
-    gl.clearColor (1, 0, 0, 1);
-    gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.CULL_FACE);
-    gl.cullFace(gl.BACK);
+    ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
+        .then (prog => {
+            /* put all one-time initialization logic here */
+            gl.useProgram (prog);
+            gl.clearColor (1, 0, 0, 1);
+            gl.enable(gl.DEPTH_TEST);
+            gl.enable(gl.CULL_FACE);
+            gl.cullFace(gl.BACK);
 
-    posAttr = gl.getAttribLocation (prog, "vertexPos");
-    colAttr = gl.getAttribLocation (prog, "vertexCol");
-    normAttr = gl.getUniformLocation(prog, "uColor");
-    lightDirection = gl.getUniformLocation(prog, "light");
-    projUnif = gl.getUniformLocation(prog, "projection");
-    viewUnif = gl.getUniformLocation(prog, "view");
-    modelUnif = gl.getUniformLocation (prog, "modelCF");
-    gl.enableVertexAttribArray (posAttr);
-    gl.enableVertexAttribArray (colAttr);
-    orthoProjMat = mat4.create();
-    persProjMat = mat4.create();
-    viewMat = mat4.create();
-    topViewMat = mat4.create();
-    frontViewMat = mat4.create();
-    rightViewMat = mat4.create();
-    cameraCF = mat4.create();
-    tmpMat = mat4.create();
+            posAttr = gl.getAttribLocation (prog, "vertexPos");
+            colAttr = gl.getAttribLocation (prog, "vertexCol");
+            normAttr = gl.getUniformLocation(prog, "uColor");
+            lightDirection = gl.getUniformLocation(prog, "light");
+            projUnif = gl.getUniformLocation(prog, "projection");
+            viewUnif = gl.getUniformLocation(prog, "view");
+            modelUnif = gl.getUniformLocation (prog, "modelCF");
+            gl.enableVertexAttribArray (posAttr);
+            gl.enableVertexAttribArray (colAttr);
+            orthoProjMat = mat4.create();
+            persProjMat = mat4.create();
+            viewMat = mat4.create();
+            topViewMat = mat4.create();
+            frontViewMat = mat4.create();
+            rightViewMat = mat4.create();
+            cameraCF = mat4.create();
+            tmpMat = mat4.create();
 
-    mat4.lookAt(viewMat,
-      vec3.fromValues(2, 2, 2), /* eye */
-      vec3.fromValues(0, 0, 0), /* focal point */
-      vec3.fromValues(0, 0, 1)  /* up */
-    );
+            mat4.lookAt(viewMat,
+                vec3.fromValues(2, 2, 2), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)  /* up */
+            );
 
-    mat4.lookAt(topViewMat,
-      vec3.fromValues(0,0,2),
-      vec3.fromValues(0,0,0),
-      vec3.fromValues(0,1,0)
-    );
+            mat4.lookAt(topViewMat,
+                vec3.fromValues(0,0,2),
+                vec3.fromValues(0,0,0),
+                vec3.fromValues(0,1,0)
+            );
 
-      mat4.lookAt(frontViewMat,
-          vec3.fromValues(0,2,0),
-          vec3.fromValues(0,0,0),
-          vec3.fromValues(0,0,1)
-      );
+            mat4.lookAt(frontViewMat,
+                vec3.fromValues(0,2,0),
+                vec3.fromValues(0,0,0),
+                vec3.fromValues(0,0,1)
+            );
 
-      mat4.lookAt(rightViewMat,
-          vec3.fromValues(2,0,0),
-          vec3.fromValues(0,0,0),
-          vec3.fromValues(0,0,1)
-      );
+            mat4.lookAt(rightViewMat,
+                vec3.fromValues(2,0,0),
+                vec3.fromValues(0,0,0),
+                vec3.fromValues(0,0,1)
+            );
 
-    gl.uniformMatrix4fv(modelUnif, false, cameraCF);
-    gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
-    gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
+            gl.uniformMatrix4fv(modelUnif, false, cameraCF);
+            gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
+            gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
 
-    numOfCameraObjs = document.getElementById("numOfCameraObjs");
-    mostRecentNumOfCameraObjs = -1;
-    numOfTableObjs = document.getElementById("numOfTableObjs");
-    mostRecentNumOfTableObjs = -1;
-    numOfScreenObjs = document.getElementById("numOfScreenObjs");
-    mostRecentNumOfScreenObjs = -1;
+            numOfCameraObjs = document.getElementById("numOfCameraObjs");
+            mostRecentNumOfCameraObjs = -1;
+            numOfTableObjs = document.getElementById("numOfTableObjs");
+            mostRecentNumOfTableObjs = -1;
+            numOfScreenObjs = document.getElementById("numOfScreenObjs");
+            mostRecentNumOfScreenObjs = -1;
 
-    createCameraObjs();
-    createTableObjs();
-    createScreenObjs();
+            createCameraObjs();
+            createTableObjs();
+            createScreenObjs();
 
-    /* calculate viewport */
-    resizeWindow();
+            /* calculate viewport */
+            resizeWindow();
 
-    timeStamp = Date.now();
+            timeStamp = Date.now();
 
-    /* initiate the render loop */
-    render();
-  });
+            /* initiate the render loop */
+            render();
+        });
 }
 
 function createCameraObjs() {
@@ -390,70 +390,70 @@ function moveView(currentCameraView, command) {
 
 
 function render() {
-  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-  switch (currentCameraView) {
-      case "3D":
-          draw3D();
-          break;
-      case "Top":
-          drawTopView();
-          break;
-      case "Front":
-          drawFrontView();
-          break;
-      case "Right":
-          drawRightView();
-          break;
-      default:
-          draw3D();
-          break;
-  }
+    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+    switch (currentCameraView) {
+        case "3D":
+            draw3D();
+            break;
+        case "Top":
+            drawTopView();
+            break;
+        case "Front":
+            drawFrontView();
+            break;
+        case "Right":
+            drawRightView();
+            break;
+        default:
+            draw3D();
+            break;
+    }
 
-  if (shouldAnimate) {
-      let now = Date.now();
-      if (now/1000 - timeStart/1000 <= 1) {
-          let elapse = (now - timeStamp) / 1000;
-          /* convert to second */
-          timeStamp = now;
-          let spinAngle = -elapse * (speed/60) * Math.PI;
-          let camera = cameraObjArr[cameraObjSelect.value];
+    if (shouldAnimate) {
+        let now = Date.now();
+        if (now/1000 - timeStart/1000 <= 1) {
+            let elapse = (now - timeStamp) / 1000;
+            /* convert to second */
+            timeStamp = now;
+            let spinAngle = -elapse * (speed/60) * Math.PI;
+            let camera = cameraObjArr[cameraObjSelect.value];
 
-          // Spin lens
-          mat4.rotateZ(camera.lensTransform, camera.lensTransform, spinAngle * 2);
+            // Spin lens
+            mat4.rotateZ(camera.lensTransform, camera.lensTransform, spinAngle * 2);
 
-          let cameraFrame;
+            let cameraFrame;
 
-          if (forward) {
-              // Spin Wheels
-              mat4.rotateZ(camera.triWheel1Transform, camera.triWheel1Transform, spinAngle);
-              mat4.rotateZ(camera.triWheel2Transform, camera.triWheel2Transform, spinAngle);
-              mat4.rotateZ(camera.triWheel3Transform, camera.triWheel3Transform, spinAngle);
-              mat4.rotateZ(camera.triWheel4Transform, camera.triWheel4Transform, spinAngle);
+            if (forward) {
+                // Spin Wheels
+                mat4.rotateZ(camera.triWheel1Transform, camera.triWheel1Transform, spinAngle);
+                mat4.rotateZ(camera.triWheel2Transform, camera.triWheel2Transform, spinAngle);
+                mat4.rotateZ(camera.triWheel3Transform, camera.triWheel3Transform, spinAngle);
+                mat4.rotateZ(camera.triWheel4Transform, camera.triWheel4Transform, spinAngle);
 
-              // Translate camera
-              cameraFrame = cameraObjSelect.value;
-              const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(spinAngle, 0, 0));
-              mat4.multiply(cameraObjFrames[cameraFrame], transXneg, cameraObjFrames[cameraFrame]);
-          } else {
-              // Spin Wheels
-              mat4.rotateZ(camera.triWheel1Transform, camera.triWheel1Transform, -spinAngle);
-              mat4.rotateZ(camera.triWheel2Transform, camera.triWheel2Transform, -spinAngle);
-              mat4.rotateZ(camera.triWheel3Transform, camera.triWheel3Transform, -spinAngle);
-              mat4.rotateZ(camera.triWheel4Transform, camera.triWheel4Transform, -spinAngle);
+                // Translate camera
+                cameraFrame = cameraObjSelect.value;
+                const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(spinAngle, 0, 0));
+                mat4.multiply(cameraObjFrames[cameraFrame], transXneg, cameraObjFrames[cameraFrame]);
+            } else {
+                // Spin Wheels
+                mat4.rotateZ(camera.triWheel1Transform, camera.triWheel1Transform, -spinAngle);
+                mat4.rotateZ(camera.triWheel2Transform, camera.triWheel2Transform, -spinAngle);
+                mat4.rotateZ(camera.triWheel3Transform, camera.triWheel3Transform, -spinAngle);
+                mat4.rotateZ(camera.triWheel4Transform, camera.triWheel4Transform, -spinAngle);
 
-              // Translate camera
-              cameraFrame = cameraObjSelect.value;
-              const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(-spinAngle, 0, 0));
-              mat4.multiply(cameraObjFrames[cameraFrame], transXpos, cameraObjFrames[cameraFrame]);
-          }
+                // Translate camera
+                cameraFrame = cameraObjSelect.value;
+                const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(-spinAngle, 0, 0));
+                mat4.multiply(cameraObjFrames[cameraFrame], transXpos, cameraObjFrames[cameraFrame]);
+            }
 
-      } else {
-          shouldAnimate = false;
-          paused = false;
-          forward ? forward = false : forward = true;
-      }
-  }
-  requestAnimationFrame(render);
+        } else {
+            shouldAnimate = false;
+            paused = false;
+            forward ? forward = false : forward = true;
+        }
+    }
+    requestAnimationFrame(render);
 }
 
 function resizeWindow() {
