@@ -30,52 +30,53 @@ class Cube2 {
         ];
 
         //Normal vectors
-        this.normal = [
-            // Front
-            0.0,  0.0,  1.0,
-            0.0,  0.0,  1.0,
-            0.0,  0.0,  1.0,
-            0.0,  0.0,  1.0,
+        let normal = [];
+        let sidePoints = Math.pow((subDiv + 1), 2);
+        //Top
+        for(let k = 0; k < sidePoints; k ++){
+            let norm = vec3.fromValues(0, size, 0);
+            normal.push(norm);
+        }
 
-            // Back
-            0.0,  0.0, -1.0,
-            0.0,  0.0, -1.0,
-            0.0,  0.0, -1.0,
-            0.0,  0.0, -1.0,
+        // Front
+        for(let k = 0; k < sidePoints; k ++){
+            let norm = vec3.fromValues(0, 0, size);
+            normal.push(norm);
+        }
 
-            // Top
-            0.0,  1.0,  0.0,
-            0.0,  1.0,  0.0,
-            0.0,  1.0,  0.0,
-            0.0,  1.0,  0.0,
+         // Bottom
+         for(let k = 0; k < sidePoints; k ++){
+            let norm = vec3.fromValues(0, -size, 0);
+            normal.push(norm);
+         }
 
-            // Bottom
-            0.0, -1.0,  0.0,
-            0.0, -1.0,  0.0,
-            0.0, -1.0,  0.0,
-            0.0, -1.0,  0.0,
+        // Back
+         for(let k = 0; k < sidePoints; k ++){
+             let norm = vec3.fromValues(0, 0, -size);
+             normal.push(norm);
+        }
 
-            // Right
-            1.0,  0.0,  0.0,
-            1.0,  0.0,  0.0,
-            1.0,  0.0,  0.0,
-            1.0,  0.0,  0.0,
+        // Right
+        for(let k = 0; k < sidePoints; k ++) {
+            let norm = vec3.fromValues(size, 0, 0);
+            normal.push(norm);
+        }
 
-            // Left
-            -1.0,  0.0,  0.0,
-            -1.0,  0.0,  0.0,
-            -1.0,  0.0,  0.0,
-            -1.0,  0.0,  0.0
+        // Left
+         for(let k = 0; k < sidePoints; k ++){
+              let norm = vec3.fromValues(-size, 0, 0);
+              normal.push(norm);
+         }
 
-        ];
+
 
         //Normal buffer
         this.nbuff = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
-        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(this.normal), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(normal), gl.STATIC_DRAW);
 
         this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
-
+        this.norm = [];
         this.index = [];
 
         this.split (subDiv, 0, 1, 2, 3, col1); /* top: Z+ */
@@ -88,7 +89,9 @@ class Cube2 {
         for (let k = 0; k < this.vex.length; k++)
         {
             vertices.push(this.vex[k][0], this.vex[k][1], this.vex[k][2]);
-            vertices.push(this.color[k][0], this.color[k][1], this.color[k][2]);
+            //vertices.push(this.color[k][0], this.color[k][1], this.color[k][2]);
+            //vec3.cross();
+            //vertices.push(normal[k][0], normal[k][1], normal[k][3]);
         }
         this.vbuff = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
@@ -96,7 +99,7 @@ class Cube2 {
 
         let ibuff = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuff);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(this.index), gl.STATIC_DRAW)
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array.from(this.index), gl.STATIC_DRAW);
         this.indices = [{primitive: gl.TRIANGLES, buffer: ibuff, numPoints: this.index.length}];
     }
 
@@ -104,7 +107,9 @@ class Cube2 {
         if (N > 0) {
             let mid_ab = vec3.lerp(vec3.create(), this.vex[a], this.vex[b], 0.5);
             this.vex.push(mid_ab);
-            this.color.push(col);
+            //vec3.cross (this.norm, mid_ab, this.vex );
+            //this.color.push(col);
+            //this.norm.push();
             let n_ab = this.vex.length - 1;
 
             let mid_bc = vec3.lerp(vec3.create(), this.vex[b], this.vex[c], 0.5);
@@ -144,7 +149,7 @@ class Cube2 {
      * @param {Number} modelUniform a handle to a mat4 uniform in the shader for the coordinate frame of the model
      * @param {mat4} coordFrame a JS mat4 variable that holds the actual coordinate frame of the object
      */
-    draw(vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
+    draw(vertexAttr, normAttr, modelUniform, coordFrame) {
         /* copy the coordinate frame matrix to the uniform memory in shader */
         gl.uniformMatrix4fv(modelUniform, false, coordFrame);
 
