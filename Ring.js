@@ -218,7 +218,7 @@ class Ring {
          the stride distance between one group to the next is 24 bytes */
         gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0); /* (x,y,z) begins at offset 0 */
         gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
-        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
+        //gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
 
         for (let k = 0; k < this.indices.length; k++) {
             let obj = this.indices[k];

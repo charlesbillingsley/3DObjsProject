@@ -26,7 +26,7 @@ class GreenScreen {
 
     }
 
-    draw (vertexAttr, normAttr, modelUniform, coordFrame) {
+    draw (vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
         // Screen
         mat4.mul(this.blank, coordFrame, this.screenTransform);
         this.greenScreen.draw(vertexAttr, normAttr, modelUniform, this.blank);

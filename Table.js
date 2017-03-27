@@ -57,7 +57,7 @@ class Table {
 
     }
 
-    draw (vertexAttr, normAttr, modelUniform, coordFrame) {
+    draw (vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
         //Table Top
         mat4.mul(this.blank, coordFrame, this.topTransform);
         this.tableTop.draw(vertexAttr, normAttr, modelUniform, this.blank);

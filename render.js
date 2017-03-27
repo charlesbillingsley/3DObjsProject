@@ -6,10 +6,11 @@
  * Adapted from code given from Hans Dulimarta
  */
 let canvas;
-let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF;
+let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF, normalMat;
 let currentCameraView = "3D";
 let posAttr, colAttr, normAttr;
-let modelUnif, viewUnif, projUnif;
+let modelUnif, viewUnif, projUnif, pointLight;
+let lightPos;
 let gl;
 let lightDirection;
 let cameraObjArr = [];
@@ -28,6 +29,8 @@ let paused = false;
 let forward = true;
 let timeStamp, timeStart;
 let speed = 10;
+
+let normalUnif, useLightingUnif, objTintUnif, ambCoeffUnif, diffCoeffUnif, specCoeffUnif, shininessUnif, lightCF;
 
 function main() {
   canvas = document.getElementById("gl-canvas");
@@ -50,12 +53,20 @@ function main() {
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
     normAttr = gl.getUniformLocation(prog, "vertexNormal");
-    lightDirection = gl.getUniformLocation(prog, "light");
+    lightPos = gl.getUniformLocation(prog, "lightPosWorld");
     projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
     modelUnif = gl.getUniformLocation (prog, "modelCF");
+    normalUnif = gl.getUniformLocation(prog, "normalMat");
+    useLightingUnif = gl.getUniformLocation (prog, "useLighting");
+    objTintUnif = gl.getUniformLocation(prog, "objectTint");
+    ambCoeffUnif = gl.getUniformLocation(prog, "ambientCoeff");
+    diffCoeffUnif = gl.getUniformLocation(prog, "diffuseCoeff");
+    specCoeffUnif = gl.getUniformLocation(prog, "specularCoeff");
+    shininessUnif = gl.getUniformLocation(prog, "shininess");
     gl.enableVertexAttribArray (posAttr);
     gl.enableVertexAttribArray (normAttr);
+    gl.enableVertexAttribArray(colAttr);
     orthoProjMat = mat4.create();
     persProjMat = mat4.create();
     viewMat = mat4.create();
@@ -64,8 +75,14 @@ function main() {
     rightViewMat = mat4.create();
     cameraCF = mat4.create();
     tmpMat = mat4.create();
+    normalMat = mat3.create();
+    lightCF = mat4.create();
 
-    mat4.lookAt(viewMat,
+    lightPos = vec3.fromValues(0, 2, 2);
+    mat4.fromTranslation(lightCF, lightPos);
+
+
+      mat4.lookAt(viewMat,
       vec3.fromValues(2, 2, 2), /* eye */
       vec3.fromValues(0, 0, 0), /* focal point */
       vec3.fromValues(0, 0, 1)  /* up */
@@ -90,9 +107,15 @@ function main() {
       );
 
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
-    gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
-    gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
+    //gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
+    //gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
+      objTint = vec3.fromValues(1, .3, 1);
+      gl.uniform3fv(objTintUnif, objTint);
+      gl.uniform1f(ambCoeffUnif, 1);
+      gl.uniform1f(diffCoeffUnif, 1);
+      gl.uniform1f(specCoeffUnif, 1);
+      gl.uniform1f(shininessUnif, 1);
 
     numOfCameraObjs = document.getElementById("numOfCameraObjs");
     mostRecentNumOfCameraObjs = -1;
@@ -109,6 +132,9 @@ function main() {
     resizeWindow();
 
     timeStamp = Date.now();
+
+      let yellow = vec3.fromValues (0xe7/255, 0xf2/255, 0x4d/255);
+      pointLight = new Sphere(gl, 0.03, 3, yellow, yellow);
 
     /* initiate the render loop */
     render();
@@ -288,6 +314,9 @@ function drawScene() {
     for (let l = 0; l < screenObjArr.length; l++) {
         screenObjArr[l].draw(posAttr, colAttr, normAttr, modelUnif, screenObjFrames[l]);
     }
+
+    pointLight.draw(posAttr, colAttr, normAttr, modelUnif, lightCF);
+
 }
 
 function draw3D() {
