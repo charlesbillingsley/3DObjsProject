@@ -180,15 +180,15 @@ class Camera {
 
         // Flash
         mat4.mul(this.blank, coordFrame, this.flashTransform);
-        this.flash.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.flash.draw(vertexAttr, normAttr, modelUniform, this.blank);
 
         // Flash Glass
         mat4.mul(this.blank, coordFrame, this.flashGlassTransform);
-        this.flashGlass.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.flashGlass.draw(vertexAttr, normAttr, modelUniform, this.blank);
 
         // Camera Body
         mat4.mul(this.blank, coordFrame, this.bodyTransform);
-        this.body.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.body.draw(vertexAttr, normAttr, modelUniform, this.blank);
 
     }
 }

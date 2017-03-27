@@ -11,7 +11,7 @@ class GreenScreen {
 
         /** Objects */
         // Screen
-        this.greenScreen = new Cube2(gl, 10, 1, this.Color1, this.Color2, this.Color2);
+        this.greenScreen = new Cube2(gl, 10, 4, this.Color1, this.Color2, this.Color2);
 
         /** Transformations */
         // Screen
@@ -26,9 +26,9 @@ class GreenScreen {
 
     }
 
-    draw (vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
+    draw (vertexAttr, normAttr, modelUniform, coordFrame) {
         // Screen
         mat4.mul(this.blank, coordFrame, this.screenTransform);
-        this.greenScreen.draw(vertexAttr, colorAttr, normAttr, modelUniform, this.blank);
+        this.greenScreen.draw(vertexAttr, normAttr, modelUniform, this.blank);
     }
 }

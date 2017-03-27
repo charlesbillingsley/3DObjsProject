@@ -75,23 +75,34 @@ class Cube2 {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(normal), gl.STATIC_DRAW);
 
-        this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
-        this.norm = [];
+        let topNorm = vec3.fromValues(0, 1, 0);
+        let frontNorm = vec3.fromValues(0, 0, 1);
+        let bottomNorm = vec3.fromValues(0, -1, 0);
+        let backNorm = vec3.fromValues(0, 0, -1);
+        let rightNorm = vec3.fromValues(1, 0, 0);
+        let leftNorm = vec3.fromValues(-1, 0, 0);
+
+        //this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
+
+        this.norm = [topNorm, frontNorm, bottomNorm, backNorm, rightNorm, leftNorm, topNorm, frontNorm];
         this.index = [];
 
-        this.split (subDiv, 0, 1, 2, 3, col1); /* top: Z+ */
-        this.split (subDiv, 0, 4, 5, 1, col2); /* front: Y- */
-        this.split (subDiv, 4, 7, 6, 5, col1); /* bottom: Z- */
-        this.split (subDiv, 2, 6, 7, 3, col2); /* back: Y+ */
-        this.split (subDiv, 1, 5, 6, 2, col3); /* right: X+ */
-        this.split (subDiv, 0, 3, 7, 4, col3); /* left: X- */
+
+
+
+        this.split (subDiv, 0, 1, 2, 3, topNorm); /* top: Z+ */
+        this.split (subDiv, 0, 4, 5, 1, frontNorm); /* front: Y- */
+        this.split (subDiv, 4, 7, 6, 5, bottomNorm); /* bottom: Z- */
+        this.split (subDiv, 2, 6, 7, 3, backNorm); /* back: Y+ */
+        this.split (subDiv, 1, 5, 6, 2, rightNorm); /* right: X+ */
+        this.split (subDiv, 0, 3, 7, 4, leftNorm); /* left: X- */
         let vertices = [];
         for (let k = 0; k < this.vex.length; k++)
         {
             vertices.push(this.vex[k][0], this.vex[k][1], this.vex[k][2]);
             //vertices.push(this.color[k][0], this.color[k][1], this.color[k][2]);
             //vec3.cross();
-            //vertices.push(normal[k][0], normal[k][1], normal[k][3]);
+            vertices.push(this.norm[k][0], this.norm[k][1], this.norm[k][3]);
         }
         this.vbuff = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vbuff);
@@ -103,39 +114,39 @@ class Cube2 {
         this.indices = [{primitive: gl.TRIANGLES, buffer: ibuff, numPoints: this.index.length}];
     }
 
-    split (N, a, b, c, d, col) {
+    split (N, a, b, c, d, normal) {
         if (N > 0) {
             let mid_ab = vec3.lerp(vec3.create(), this.vex[a], this.vex[b], 0.5);
             this.vex.push(mid_ab);
             //vec3.cross (this.norm, mid_ab, this.vex );
             //this.color.push(col);
-            //this.norm.push();
+            this.norm.push(normal);
             let n_ab = this.vex.length - 1;
 
             let mid_bc = vec3.lerp(vec3.create(), this.vex[b], this.vex[c], 0.5);
             this.vex.push(mid_bc);
-            this.color.push(col);
+            this.norm.push(normal);
             let n_bc = this.vex.length - 1;
 
             let mid_cd = vec3.lerp(vec3.create(), this.vex[c], this.vex[d], 0.5);
             this.vex.push(mid_cd);
-            this.color.push(col);
+            this.norm.push(normal);
             let n_cd = this.vex.length - 1;
 
             let mid_da = vec3.lerp(vec3.create(), this.vex[d], this.vex[a], 0.5);
             this.vex.push(mid_da);
-            this.color.push(col);
+            this.norm.push(normal);
             let n_da = this.vex.length - 1;
 
             let ctr = vec3.lerp(vec3.create(), this.vex[n_ab], this.vex[n_cd], 0.5);
             this.vex.push(ctr);
-            this.color.push(col);
+            this.norm.push(normal);
             let n_ctr = this.vex.length - 1;
 
-            this.split (N - 1, a, n_ab, n_ctr, n_da, col);
-            this.split (N - 1, n_da, n_ctr, n_cd, d, col);
-            this.split (N - 1, n_ab, b, n_bc, n_ctr, col);
-            this.split (N - 1, n_ctr, n_bc, c, n_cd, col);
+            this.split (N - 1, a, n_ab, n_ctr, n_da, normal);
+            this.split (N - 1, n_da, n_ctr, n_cd, d, normal);
+            this.split (N - 1, n_ab, b, n_bc, n_ctr, normal);
+            this.split (N - 1, n_ctr, n_bc, c, n_cd, normal);
         } else {
             /* stop recursion */
             this.index.push(a, b, c);
@@ -159,11 +170,11 @@ class Cube2 {
         /* with the "packed layout"  (x,y,z,r,g,b),
          the stride distance between one group to the next is 24 bytes */
         gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0); /* (x,y,z) begins at offset 0 */
-        gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
+        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
 
         //Normal AttribPointer
         //gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
-        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
+        //gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
 
 
 

@@ -42,20 +42,20 @@ function main() {
   .then (prog => {
     /* put all one-time initialization logic here */
     gl.useProgram (prog);
-    gl.clearColor (1, 0, 0, 1);
+    gl.clearColor (1, 0.5, .5, 1);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
 
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
-    normAttr = gl.getUniformLocation(prog, "uColor");
+    normAttr = gl.getUniformLocation(prog, "vertexNormal");
     lightDirection = gl.getUniformLocation(prog, "light");
     projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
     modelUnif = gl.getUniformLocation (prog, "modelCF");
     gl.enableVertexAttribArray (posAttr);
-    gl.enableVertexAttribArray (colAttr);
+    gl.enableVertexAttribArray (normAttr);
     orthoProjMat = mat4.create();
     persProjMat = mat4.create();
     viewMat = mat4.create();

@@ -34,8 +34,8 @@ void main() {
         vec3 color = vec3 (0, 0, 0);
         vec3 lightVecInEye = normalize(vec3(lightPosInEye - vertexPosInEye));
         vec3 normalInEye = normalize(normalMat * vertexNormal);
-        if (isEnabled[0])
-           color += ambientCoeff * objectTint;
+        //if (isEnabled[0])
+        //   color += ambientCoeff * objectTint;
         if (isEnabled[1]) { /* calculate diffuse component */
           /* calculate diffuse reflection */
           float diffuse = clamp (dot(lightVecInEye, normalInEye), 0.0, 1.0);
