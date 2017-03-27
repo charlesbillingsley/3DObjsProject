@@ -90,8 +90,8 @@ function main() {
       );
 
     gl.uniformMatrix4fv(modelUnif, false, cameraCF);
-    gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
-    gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
+    //gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
+   // gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
 
     numOfCameraObjs = document.getElementById("numOfCameraObjs");

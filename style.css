@@ -25,6 +25,11 @@ ul {
     list-style: circle outside none;
 }
 
+input[type=radio] {
+    width: inherit;
+    height: 1em;
+}
+
 select {
     /* Browser Support */
     background-image: -webkit-linear-gradient(top, #65b2e6, #449acf);
