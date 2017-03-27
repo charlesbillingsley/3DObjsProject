@@ -207,7 +207,7 @@ class Ring {
      * @param {Number} modelUniform a handle to a mat4 uniform in the shader for the coordinate frame of the model
      * @param {mat4} coordFrame a JS mat4 variable that holds the actual coordinate frame of the object
      */
-    draw(vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
+    draw(vertexAttr, normAttr, modelUniform, coordFrame) {
         /* copy the coordinate frame matrix to the uniform memory in shader */
         gl.uniformMatrix4fv(modelUniform, false, coordFrame);
 
@@ -217,8 +217,8 @@ class Ring {
         /* with the "packed layout"  (x,y,z,r,g,b),
          the stride distance between one group to the next is 24 bytes */
         gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0); /* (x,y,z) begins at offset 0 */
-        gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
-        //gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
+       // gl.vertexAttribPointer(colorAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
+        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 0, 0);
 
         for (let k = 0; k < this.indices.length; k++) {
             let obj = this.indices[k];

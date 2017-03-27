@@ -12,7 +12,7 @@ let posAttr, colAttr, normAttr;
 let modelUnif, viewUnif, projUnif, pointLight;
 let lightPos;
 let gl;
-let lightDirection;
+let lightPosUnif;
 let cameraObjArr = [];
 let tableObjArr = [];
 let screenObjArr = [];
@@ -53,7 +53,7 @@ function main() {
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
     normAttr = gl.getUniformLocation(prog, "vertexNormal");
-    lightPos = gl.getUniformLocation(prog, "lightPosWorld");
+    lightPosUnif = gl.getUniformLocation(prog, "lightPosWorld");
     projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
     modelUnif = gl.getUniformLocation (prog, "modelCF");
@@ -66,7 +66,7 @@ function main() {
     shininessUnif = gl.getUniformLocation(prog, "shininess");
     gl.enableVertexAttribArray (posAttr);
     gl.enableVertexAttribArray (normAttr);
-    gl.enableVertexAttribArray(colAttr);
+    //gl.enableVertexAttribArray(colAttr);
     orthoProjMat = mat4.create();
     persProjMat = mat4.create();
     viewMat = mat4.create();
@@ -80,6 +80,8 @@ function main() {
 
     lightPos = vec3.fromValues(0, 2, 2);
     mat4.fromTranslation(lightCF, lightPos);
+
+    gl.uniform3fv(lightPosUnif,lightPos);
 
 
       mat4.lookAt(viewMat,
@@ -115,7 +117,7 @@ function main() {
       gl.uniform1f(ambCoeffUnif, 1);
       gl.uniform1f(diffCoeffUnif, 1);
       gl.uniform1f(specCoeffUnif, 1);
-      gl.uniform1f(shininessUnif, 1);
+      gl.uniform1f(shininessUnif, 0.5);
 
     numOfCameraObjs = document.getElementById("numOfCameraObjs");
     mostRecentNumOfCameraObjs = -1;
@@ -134,7 +136,7 @@ function main() {
     timeStamp = Date.now();
 
       let yellow = vec3.fromValues (0xe7/255, 0xf2/255, 0x4d/255);
-      pointLight = new Sphere(gl, 0.03, 3, yellow, yellow);
+      pointLight = new Sphere(gl, .03, 10, yellow, yellow);
 
     /* initiate the render loop */
     render();
@@ -306,16 +308,20 @@ function populateDropDown(obj) {
 
 function drawScene() {
     for (let k = 0; k < cameraObjArr.length; k++) {
-        cameraObjArr[k].draw(posAttr, colAttr, normAttr, modelUnif, cameraObjFrames[k]);
+        cameraObjArr[k].draw(posAttr, normAttr, modelUnif, cameraObjFrames[k]);
     }
     for (let j = 0; j < tableObjArr.length; j++) {
         tableObjArr[j].draw(posAttr, colAttr, normAttr, modelUnif, tableObjFrames[j]);
+
     }
     for (let l = 0; l < screenObjArr.length; l++) {
         screenObjArr[l].draw(posAttr, colAttr, normAttr, modelUnif, screenObjFrames[l]);
+
     }
 
-    pointLight.draw(posAttr, colAttr, normAttr, modelUnif, lightCF);
+    pointLight.draw(posAttr, normAttr, modelUnif, lightCF);
+
+
 
 }
 
@@ -323,6 +329,8 @@ function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, viewMat);
+    mat3.normalFromMat4 (normalMat, tmpMat);
+    gl.uniformMatrix3fv (normalUnif, false, normalMat);
     gl.viewport(0, 0, canvas.width, canvas.height);
     drawScene();
 }
