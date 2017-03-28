@@ -75,17 +75,17 @@ class Cube2 {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
         gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(normal), gl.STATIC_DRAW);
 
-        let topNorm = vec3.fromValues(0, 1, 0);
-        let topNormLine = vec3.fromValues(0, 2, 0);
+        let topNorm = vec3.fromValues(0, 0, 1);
+        let topNormLine = vec3.fromValues(0, 0, 2);
 
-        let frontNorm = vec3.fromValues(0, 0, 1);
-        let frontNormLine = vec3.fromValues(0, 0, 2);
+        let frontNorm = vec3.fromValues(0, -1, 0);
+        let frontNormLine = vec3.fromValues(0, -2, 0);
 
-        let bottomNorm = vec3.fromValues(0, -1, 0);
-        let bottomNormLine = vec3.fromValues(0, -2, 0);
+        let bottomNorm = vec3.fromValues(0, 0, -1);
+        let bottomNormLine = vec3.fromValues(0, 0, -2);
 
-        let backNorm = vec3.fromValues(0, 0, -1);
-        let backNormLine = vec3.fromValues(0, 0, -2);
+        let backNorm = vec3.fromValues(0, 1, 0);
+        let backNormLine = vec3.fromValues(0, 2, 0);
 
         let rightNorm = vec3.fromValues(1, 0, 0);
         let rightNormLine = vec3.fromValues(2, 0, 0);
@@ -97,7 +97,7 @@ class Cube2 {
         //this.color = [col1, col2, col3, col1, col2, col3, col1, col2];
         this.color = vec3.fromValues(1,1,1);
 
-        this.norm = [topNorm, frontNorm, bottomNorm, backNorm, rightNorm, leftNorm, topNorm, frontNorm];
+        this.norm = [topNorm, rightNorm, backNorm, frontNorm, leftNorm, rightNorm, backNorm, leftNorm];
         this.index = [];
         this.normalLines = [topNorm, this.color, topNormLine, this.color, frontNorm, this.color,frontNormLine, this.color,
             bottomNorm, this.color, bottomNormLine, this.color,
@@ -213,7 +213,7 @@ class Cube2 {
      * @param {Number} modelUniform a handle to a mat4 uniform in the shader for the coordinate frame of the model
      * @param {mat4} coordFrame a JS mat4 variable that holds the actual coordinate frame of the object
      */
-    draw(vertexAttr, colorAttr, normAttr, modelUniform, coordFrame) {
+    draw(vertexAttr, normAttr, modelUniform, coordFrame) {
         /* copy the coordinate frame matrix to the uniform memory in shader */
         gl.uniformMatrix4fv(modelUniform, false, coordFrame);
 
@@ -236,9 +236,9 @@ class Cube2 {
             gl.drawElements(obj.primitive, obj.numPoints, gl.UNSIGNED_SHORT, 0);
         }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
-        gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0);
-        gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
-        gl.drawArrays(gl.LINE_STRIP, 0, this.normalLines.length /2 -16);
+        //gl.bindBuffer(gl.ARRAY_BUFFER, this.nbuff);
+        //gl.vertexAttribPointer(vertexAttr, 3, gl.FLOAT, false, 24, 0);
+        //gl.vertexAttribPointer(normAttr, 3, gl.FLOAT, false, 24, 12); /* (r,g,b) begins at offset 12 */
+       //gl.drawArrays(gl.LINE_STRIP, 0, this.normalLines.length /2 -16);
     }
 }

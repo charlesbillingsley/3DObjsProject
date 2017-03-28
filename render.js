@@ -8,7 +8,7 @@
 let canvas;
 let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, tmpMat, cameraCF, normalMat;
 let currentCameraView = "3D";
-let posAttr, colAttr, normAttr;
+var posAttr, colAttr, normAttr;
 let modelUnif, viewUnif, projUnif, pointLight;
 const IDENTITY = mat4.create();
 let linebuff;
@@ -43,6 +43,13 @@ function main() {
   window.addEventListener('resize', resizeWindow);
   window.addEventListener("keydown", keyboardHandler, false);
 
+  let lightxslider = document.getElementById("lightx");
+  let lightyslider = document.getElementById("lighty");
+  let lightzslider = document.getElementById("lightz");
+  lightxslider.addEventListener('input', lightPosChanged, false);
+  lightyslider.addEventListener('input', lightPosChanged, false);
+  lightzslider.addEventListener('input', lightPosChanged, false);
+
   ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
   .then (prog => {
     /* put all one-time initialization logic here */
@@ -54,7 +61,7 @@ function main() {
 
     posAttr = gl.getAttribLocation (prog, "vertexPos");
     colAttr = gl.getAttribLocation (prog, "vertexCol");
-    normAttr = gl.getUniformLocation(prog, "vertexNormal");
+    normAttr = gl.getAttribLocation(prog, "vertexNormal");
     lightPosUnif = gl.getUniformLocation(prog, "lightPosWorld");
     projUnif = gl.getUniformLocation(prog, "projection");
     viewUnif = gl.getUniformLocation(prog, "view");
@@ -80,10 +87,13 @@ function main() {
     normalMat = mat3.create();
     lightCF = mat4.create();
 
-    lightPos = vec3.fromValues(1, 1, 1);
+    lightPos = vec3.fromValues(0, 2, 2);
     mat4.fromTranslation(lightCF, lightPos);
-
+    lightx.value = lightPos[0];
+    lighty.value = lightPos[1];
+    lightz.value = lightPos[2];
     gl.uniform3fv(lightPosUnif,lightPos);
+
 
       let vertices = [0, 0, 0, 1, 1, 1,
           lightPos[0], 0, 0, 1, 1, 1,
@@ -122,9 +132,9 @@ function main() {
     //gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
     //gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
-      objTint = vec3.fromValues(0, 1, 0);
+      objTint = vec3.fromValues(.3, .3, .5);
       gl.uniform3fv(objTintUnif, objTint);
-      gl.uniform1f(ambCoeffUnif, 1);
+      gl.uniform1f(ambCoeffUnif, .3);
       gl.uniform1f(diffCoeffUnif, 1);
       gl.uniform1f(specCoeffUnif, 1);
       gl.uniform1f(shininessUnif, 1);
@@ -151,6 +161,28 @@ function main() {
     /* initiate the render loop */
     render();
   });
+}
+
+
+function lightPosChanged(ev) {
+    switch (ev.target.id) {
+        case 'lightx':
+            lightPos[0] = ev.target.value;
+            console.log(lightPos[0]);
+            break;
+        case 'lighty':
+            lightPos[1] = ev.target.value;
+            console.log(lightPos[1]);
+
+            break;
+        case 'lightz':
+            lightPos[2] = ev.target.value;
+            console.log(lightPos[2]);
+
+            break;
+    }
+    mat4.fromTranslation(lightCF, lightPos);
+    gl.uniform3fv (lightPosUnif, lightPos);
 }
 
 function createCameraObjs() {
@@ -317,15 +349,27 @@ function populateDropDown(obj) {
 }
 
 function drawScene() {
+    //gl.enableVertexAttribArray(normAttr);
+    gl.uniform3f(objTintUnif, 1, 1, 1);
     for (let k = 0; k < cameraObjArr.length; k++) {
-        cameraObjArr[k].draw(posAttr, colAttr, normAttr, modelUnif, cameraObjFrames[k]);
+        mat3.normalFromMat4 (normalMat, cameraObjFrames[k]);
+        gl.uniformMatrix3fv (normalUnif, false, normalMat);
+        cameraObjArr[k].draw(posAttr, normAttr, modelUnif, cameraObjFrames[k]);
     }
+    gl.uniform3f(objTintUnif, 1, .5, .8);
+
     for (let j = 0; j < tableObjArr.length; j++) {
-        tableObjArr[j].draw(posAttr, colAttr, normAttr, modelUnif, tableObjFrames[j]);
+        mat3.normalFromMat4 (normalMat, tableObjFrames[j]);
+        gl.uniformMatrix3fv (normalUnif, false, normalMat);
+        tableObjArr[j].draw(posAttr, normAttr, modelUnif, tableObjFrames[j]);
 
     }
+    gl.uniform3f(objTintUnif, 0, 1, 0);
+
     for (let l = 0; l < screenObjArr.length; l++) {
-        screenObjArr[l].draw(posAttr, colAttr,  normAttr, modelUnif, screenObjFrames[l]);
+        mat3.normalFromMat4 (normalMat, screenObjFrames[l]);
+        gl.uniformMatrix3fv (normalUnif, false, normalMat);
+        screenObjArr[l].draw(posAttr,  normAttr, modelUnif, screenObjFrames[l]);
 
     }
 

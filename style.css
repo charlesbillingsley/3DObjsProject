@@ -30,6 +30,19 @@ input[type=radio] {
     height: 1em;
 }
 
+#lightx{
+    width: 200px;
+    height: 20px;
+}
+#lighty{
+    width: 200px;
+    height: 20px;
+}
+#lightz{
+    width: 200px;
+    height: 20px;
+}
+
 select {
     /* Browser Support */
     background-image: -webkit-linear-gradient(top, #65b2e6, #449acf);

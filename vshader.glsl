@@ -32,20 +32,21 @@ void main() {
          * the transformed position, because vertexPos is specified
          * in the object coordinate frame */
         vec3 color = vec3 (0.0, 0.0, 0.0);
+        vec3 full = vec3 (0.8, 0.8, 0.8);
         vec3 lightVecInEye = normalize(vec3(lightPosInEye - vertexPosInEye));
         vec3 normalInEye = normalize(normalMat * vertexNormal);
-        vec3 blank = vec3  (0.0,0.0,0.0);
-        if (isEnabled[0])
+        vec3 blank = vec3  (0.0, 0.0, 0.0);
+        if (!isEnabled[0])
            color += ambientCoeff * objectTint;
         if (!isEnabled[1]) { /* calculate diffuse component */
           /* calculate diffuse reflection */
-          float diffuse = clamp (dot(lightVecInEye, blank), 0.0, 1.0);
-          color += diffuse *  diffuseCoeff * objectTint;
-          //color +=  objectTint;
-
+          float diffuse = clamp (dot(lightVecInEye, normalInEye), 0.0, 1.0);
+          //float diffuse = normalInEye;
+          color += diffuse; //* diffuseCoeff * objectTint;
+          //color +=  vertexNormal;
 
         }
-        if (isEnabled[2]) { /* calculate specular component */
+        if (!isEnabled[2]) { /* calculate specular component */
           // Using eye-based calculation, the viewer is now at (0, 0, 0)
           vec3 viewVec = normalize(-vertexPosInEye.xyz);
           /* The first arg to GLSL reflect() is the INCIDENT vector
