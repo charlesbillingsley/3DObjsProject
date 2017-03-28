@@ -10,6 +10,8 @@ let orthoProjMat, persProjMat, viewMat, topViewMat, frontViewMat, rightViewMat, 
 let currentCameraView = "3D";
 let posAttr, colAttr, normAttr;
 let modelUnif, viewUnif, projUnif, pointLight;
+const IDENTITY = mat4.create();
+let linebuff;
 let lightPos;
 let gl;
 let lightPosUnif;
@@ -78,10 +80,18 @@ function main() {
     normalMat = mat3.create();
     lightCF = mat4.create();
 
-    lightPos = vec3.fromValues(0, 2, 2);
+    lightPos = vec3.fromValues(1, 1, 1);
     mat4.fromTranslation(lightCF, lightPos);
 
     gl.uniform3fv(lightPosUnif,lightPos);
+
+      let vertices = [0, 0, 0, 1, 1, 1,
+          lightPos[0], 0, 0, 1, 1, 1,
+          lightPos[0], lightPos[1], 0, 1, 1, 1,
+          lightPos[0], lightPos[1], lightPos[2], 1, 1, 1];
+      linebuff = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, linebuff);
+      gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
 
 
       mat4.lookAt(viewMat,
@@ -112,12 +122,12 @@ function main() {
     //gl.uniform4fv(normAttr, [0.2, 0.2, 0.2, 0.5]);
     //gl.uniform3fv(lightDirection, [1, 0.5, 0.2]);
 
-      objTint = vec3.fromValues(1, .3, 1);
+      objTint = vec3.fromValues(0, 1, 0);
       gl.uniform3fv(objTintUnif, objTint);
       gl.uniform1f(ambCoeffUnif, 1);
       gl.uniform1f(diffCoeffUnif, 1);
       gl.uniform1f(specCoeffUnif, 1);
-      gl.uniform1f(shininessUnif, 0.5);
+      gl.uniform1f(shininessUnif, 1);
 
     numOfCameraObjs = document.getElementById("numOfCameraObjs");
     mostRecentNumOfCameraObjs = -1;
@@ -136,7 +146,7 @@ function main() {
     timeStamp = Date.now();
 
       let yellow = vec3.fromValues (0xe7/255, 0xf2/255, 0x4d/255);
-      pointLight = new Sphere(gl, .03, 10, yellow, yellow);
+      pointLight = new Sphere(gl, .03, 10, 1, 1);
 
     /* initiate the render loop */
     render();
@@ -308,18 +318,25 @@ function populateDropDown(obj) {
 
 function drawScene() {
     for (let k = 0; k < cameraObjArr.length; k++) {
-        cameraObjArr[k].draw(posAttr, normAttr, modelUnif, cameraObjFrames[k]);
+        cameraObjArr[k].draw(posAttr, colAttr, normAttr, modelUnif, cameraObjFrames[k]);
     }
     for (let j = 0; j < tableObjArr.length; j++) {
         tableObjArr[j].draw(posAttr, colAttr, normAttr, modelUnif, tableObjFrames[j]);
 
     }
     for (let l = 0; l < screenObjArr.length; l++) {
-        screenObjArr[l].draw(posAttr, colAttr, normAttr, modelUnif, screenObjFrames[l]);
+        screenObjArr[l].draw(posAttr, colAttr,  normAttr, modelUnif, screenObjFrames[l]);
 
     }
 
     pointLight.draw(posAttr, normAttr, modelUnif, lightCF);
+
+    /* Use LINE_STRIP to mark light position */
+    gl.uniformMatrix4fv(modelUnif, false, IDENTITY);
+    gl.bindBuffer(gl.ARRAY_BUFFER, linebuff);
+    gl.vertexAttribPointer(posAttr, 3, gl.FLOAT, false, 24, 0);
+    gl.vertexAttribPointer(colAttr, 3, gl.FLOAT, false, 24, 12);
+    gl.drawArrays(gl.LINE_STRIP, 0, 4);
 
 
 
@@ -329,6 +346,7 @@ function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, viewMat);
+    mat4.mul(tmpMat, viewMat, cameraObjFrames[0]);
     mat3.normalFromMat4 (normalMat, tmpMat);
     gl.uniformMatrix3fv (normalUnif, false, normalMat);
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -339,6 +357,8 @@ function drawTopView() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
     gl.uniformMatrix4fv(viewUnif, false, topViewMat);
+    mat3.normalFromMat4 (normalMat, tmpMat);
+    gl.uniformMatrix3fv (normalUnif, false, normalMat);
     gl.viewport(0, 0, canvas.width, canvas.height);
     drawScene();
 }
@@ -347,6 +367,8 @@ function drawFrontView() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
     gl.uniformMatrix4fv(viewUnif, false, frontViewMat);
+    mat3.normalFromMat4 (normalMat, tmpMat);
+    gl.uniformMatrix3fv (normalUnif, false, normalMat);
     gl.viewport(0, 0, canvas.width, canvas.height);
     drawScene();
 }
@@ -355,6 +377,8 @@ function drawRightView() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
     gl.uniformMatrix4fv(viewUnif, false, rightViewMat);
+    mat3.normalFromMat4 (normalMat, tmpMat);
+    gl.uniformMatrix3fv (normalUnif, false, normalMat);
     gl.viewport(0, 0, canvas.width, canvas.height);
     drawScene();
 }
