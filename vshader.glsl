@@ -27,7 +27,7 @@ void main() {
     vec4 vertexPosInEye = view * modelCF * vec4(vertexPos, 1);
     vec4 lightPosInEye = view * vec4 (lightPosWorld, 1);
     gl_Position = projection * vertexPosInEye;
-    if (!useLighting) {
+    //if (!useLighting) {
         /* the vector to light source must be calculated from
          * the transformed position, because vertexPos is specified
          * in the object coordinate frame */
@@ -54,7 +54,7 @@ void main() {
           color += pow(specular, shininess) * specularCoeff * vec3 (1,1,1);
         }
        varColor = vec4(color, 1);
-    } else {
-        varColor = vec4 (vertexCol, 1);
-    }
+    //} else {
+        //varColor = vec4 (vertexCol, 1);
+    //}
 }
